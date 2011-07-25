@@ -4,11 +4,24 @@
 # Copyright (c) 2011 Martin Ueding <dev@martin-ueding.de>
 
 import sys
+import re
+
+def parse_folder_name(name):
+    pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^/]+)/?")
+    m = pattern.match(name)
+    if m is not None:
+        return m.group(1), m.group(2)
+
+    return None
+
 
 def main():
     files = sys.argv[1:]
 
-    print files
+    for f in files:
+        print f, parse_folder_name(f)
+
+
 
 
 if __name__ == "__main__":
