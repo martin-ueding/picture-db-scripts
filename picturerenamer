@@ -17,25 +17,52 @@ def parse_folder_name(name):
     return None
 
 def parse_file_name(name):
-    pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^-]+)-(\d+)\..*")
+    pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^-]+)-(\d+).*\..*")
     m = pattern.match(name)
     if m is not None:
         return m.group(1), m.group(2), m.group(3)
 
     return None
 
+def find_number(name):
+    pattern = re.compile(r"\D*(\d+)\D*[^.]*\.(.*)")
+    m = pattern.match(name)
+    if m is not None:
+        return m.group(1), m.group(2)
+
+    return None
+
+def new_name(folder, date, name, number, suffix):
+    n = "%s/%s-%s-%s.%s" % (folder, date, name, number, suffix)
+    n = n.replace(r"//", r"/")
+    return n
+
 def main():
+    options = None
     files = sys.argv[1:]
 
     for f in files:
-        print f, parse_folder_name(f)
+        folder_info = parse_folder_name(f)
+        if folder_info is None:
+            continue
+
+
+        if options is not None and options.show_folders:
+            print f, folder_info
 
         for pic in glob.iglob(f+"/*"):
-            print pic, parse_file_name(os.path.basename(pic))
+            nameparts = parse_file_name(os.path.basename(pic))
+            if nameparts is None:
+                num = find_number(os.path.basename(pic))
+                if num is not None:
+                    number, suffix = num
+                newname = new_name(f, folder_info[0], folder_info[1], number, suffix)
+                print pic.ljust(50, '.'), newname.ljust(50)
 
-
+            else:
+                if options is not None and options.show_good:
+                    print pic, nameparts
 
 
 if __name__ == "__main__":
 	main()
-
