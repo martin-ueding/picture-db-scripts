@@ -76,7 +76,7 @@ def main():
                     newname = new_name(f, folder_info[0], folder_info[1], number, suffix)
                     if not os.path.exists(newname):
                         break
-                    number += 1
+                    number = str(int(number)+1)
 
                 print pic.ljust(50, '.'), newname.ljust(50),
 
