@@ -59,7 +59,7 @@ def main():
         if show_folders:
             print f, folder_info
 
-        for pic in glob.iglob(f+"/*"):
+        for pic in sorted(glob.iglob(f+"/*")):
             if not os.path.isfile(pic):
                 continue
 
