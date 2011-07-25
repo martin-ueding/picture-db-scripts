@@ -5,6 +5,8 @@
 
 import sys
 import re
+import os
+import glob
 
 def parse_folder_name(name):
     pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^/]+)/?")
@@ -14,12 +16,22 @@ def parse_folder_name(name):
 
     return None
 
+def parse_file_name(name):
+    pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^-]+)-(\d+)\..*")
+    m = pattern.match(name)
+    if m is not None:
+        return m.group(1), m.group(2), m.group(3)
+
+    return None
 
 def main():
     files = sys.argv[1:]
 
     for f in files:
         print f, parse_folder_name(f)
+
+        for pic in glob.iglob(f+"/*"):
+            print pic, parse_file_name(os.path.basename(pic))
 
 
 
