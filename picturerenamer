@@ -58,6 +58,9 @@ def main():
             print f, folder_info
 
         for pic in glob.iglob(f+"/*"):
+            if not os.path.isfile(pic):
+                continue
+
             nameparts = parse_file_name(os.path.basename(pic))
             if nameparts is None:
                 num = find_number(os.path.basename(pic))
