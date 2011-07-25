@@ -7,6 +7,7 @@ import sys
 import re
 import os
 import glob
+import shutil
 
 def parse_folder_name(name):
     pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^/]+)/?")
@@ -37,6 +38,12 @@ def new_name(folder, date, name, number, suffix):
     n = n.replace(r"//", r"/")
     return n
 
+def ask_rename(old, new):
+    answer = raw_input("rename? [y/N] ")
+    if answer == "y":
+        shutil.move(old, new)
+
+
 def main():
     options = None
     files = sys.argv[1:]
@@ -56,8 +63,15 @@ def main():
                 num = find_number(os.path.basename(pic))
                 if num is not None:
                     number, suffix = num
-                newname = new_name(f, folder_info[0], folder_info[1], number, suffix)
-                print pic.ljust(50, '.'), newname.ljust(50)
+
+                while True:
+                    newname = new_name(f, folder_info[0], folder_info[1], number, suffix)
+                    if not os.path.exists(newname):
+                        break
+
+                print pic.ljust(50, '.'), newname.ljust(50),
+
+                ask_rename(pic, newname)
 
             else:
                 if options is not None and options.show_good:
