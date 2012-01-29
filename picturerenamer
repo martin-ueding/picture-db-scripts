@@ -65,6 +65,22 @@ def find_number(name):
 
 
 def new_name(folder, date, name, number, suffix):
+    """
+    Generates a new name from given data.
+
+    @param folder: Folder the files goes into.
+    @type folder: str
+    @param date: Date string.
+    @type date: str
+    @param name: Event name.
+    @type name: str
+    @param number: Image number.
+    @type number: str
+    @param suffix: File suffix.
+    @type suffix: str
+    @return: Generated filename.
+    @rtype: str
+    """
     n = "%s/%s-%s-%s.%s" % (folder, date, name, number, suffix)
     n = n.replace(r"//", r"/")
     return n
