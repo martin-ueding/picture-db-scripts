@@ -110,38 +110,49 @@ def main():
     files = sys.argv[1:]
 
     for f in files:
+        # Skip this folder if it cannot be parsed.
         folder_info = parse_folder_name(f)
         if folder_info is None:
             continue
 
-
+        # Print the folder.
         if show_folders:
             print f, folder_info
 
+        # Iterate through all the pictures.
         for pic in sorted(glob.iglob(f+"/*")):
             if not os.path.isfile(pic):
                 continue
 
+            # Try to parse the picture file name.
             nameparts = parse_file_name(os.path.basename(pic))
+
+            # If the file name was not parsed correctly, try to find a number
+            # in the image file name.
             if nameparts is None:
                 num = find_number(os.path.basename(pic))
                 if num is not None:
                     number, suffix = num
                 else:
+                    # If no number could be found, state it.
                     print "Problem:", pic
                     continue
 
+                # Find the next free number, increase if number is not free.
                 while True:
                     newname = new_name(f, folder_info[0], folder_info[1], number, suffix)
                     if not os.path.exists(newname):
                         break
                     number = str(int(number)+1)
 
+                # Print old and new file name.
                 print pic.ljust(50, '.'), newname.ljust(50),
 
+                # Rename.
                 ask_rename(pic, newname)
 
             else:
+                # Show the images that was parsed correctly.
                 if show_good:
                     print pic, nameparts
 
