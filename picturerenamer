@@ -3,11 +3,11 @@
 
 # Copyright (c) 2011 Martin Ueding <dev@martin-ueding.de>
 
-import sys
-import re
-import os
 import glob
+import os
+import re
 import shutil
+import sys
 
 def parse_folder_name(name):
     pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^/]+)/?")
