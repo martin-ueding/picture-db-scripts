@@ -127,9 +127,9 @@ def main():
             # Try to parse the picture file name.
             nameparts = parse_file_name(os.path.basename(pic))
 
-            # If the file name was not parsed correctly, try to find a number
-            # in the image file name.
             if nameparts is None:
+                # If the file name was not parsed correctly, try to find a
+                # number in the image file name.
                 num = find_number(os.path.basename(pic))
                 if num is not None:
                     number, suffix = num
