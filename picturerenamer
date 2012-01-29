@@ -10,6 +10,16 @@ import shutil
 import sys
 
 def parse_folder_name(name):
+    """
+    Parses date and event name from a folder name.
+
+    If the folder does not match, return C{None}.
+
+    @param name: Folder name
+    @type name: str
+    @return: Date, event name.
+    @rtype: tuple
+    """
     pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^/]+)/?")
     m = pattern.match(name)
     if m is not None:
@@ -17,7 +27,18 @@ def parse_folder_name(name):
 
     return None
 
+
 def parse_file_name(name):
+    """
+    Parses date, eventname and number from a image file.
+
+    If the image file name does not match, return C{None}.
+
+    @param name: Folder name
+    @type name: str
+    @return: Date, eventname, number.
+    @rtype: tuple
+    """
     pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^-]+)-(\d+).*\..*")
     m = pattern.match(name)
     if m is not None:
@@ -25,7 +46,16 @@ def parse_file_name(name):
 
     return None
 
+
 def find_number(name):
+    """
+    Tries to find a number in the image file.
+
+    @param name: Image file name.
+    @type name: str
+    @return: Number, suffix.
+    @rtype: tuple
+    """
     pattern = re.compile(r"\D*(\d+)\D*[^.]*\.(.*)")
     m = pattern.match(name)
     if m is not None:
@@ -33,10 +63,12 @@ def find_number(name):
 
     return None
 
+
 def new_name(folder, date, name, number, suffix):
     n = "%s/%s-%s-%s.%s" % (folder, date, name, number, suffix)
     n = n.replace(r"//", r"/")
     return n
+
 
 def ask_rename(old, new):
     answer = raw_input("rename? [y/N] ")
