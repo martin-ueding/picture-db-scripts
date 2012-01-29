@@ -20,7 +20,7 @@ def parse_folder_name(name):
     @return: Date, event name.
     @rtype: tuple
     """
-    pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^/]+)/?")
+    pattern = re.compile(r"(2\d{3}[01]\d[0123]\d)-([^/]+)/?")
     m = pattern.match(name)
     if m is not None:
         return m.group(1), m.group(2)
@@ -39,7 +39,7 @@ def parse_file_name(name):
     @return: Date, eventname, number.
     @rtype: tuple
     """
-    pattern = re.compile(r"([12]\d[01]\d[0123]\d)-([^-]+)-(\d+).*\..*")
+    pattern = re.compile(r"(2\d{3}[01]\d[0123]\d)-([^-]+)-(\d+).*\..*")
     m = pattern.match(name)
     if m is not None:
         return m.group(1), m.group(2), m.group(3)
