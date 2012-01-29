@@ -104,8 +104,8 @@ def ask_rename(old, new):
 
 
 def main():
-    show_good = False
-    show_folders = False
+    show_good = True
+    show_folders = True
 
     files = sys.argv[1:]
 
