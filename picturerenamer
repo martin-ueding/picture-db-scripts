@@ -87,6 +87,17 @@ def new_name(folder, date, name, number, suffix):
 
 
 def ask_rename(old, new):
+    """
+    Renames a file after asking.
+
+    Asks the user whether the file should be renamed. If accepted, the file is
+    renamed.
+
+    @param old: Old filename.
+    @type old: str
+    @param new: New filename.
+    @type new: str
+    """
     answer = raw_input("rename? [y/N] ")
     if answer == "y":
         shutil.move(old, new)
