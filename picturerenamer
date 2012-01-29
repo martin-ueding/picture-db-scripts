@@ -3,6 +3,19 @@
 
 # Copyright (c) 2011-2012 Martin Ueding <dev@martin-ueding.de>
 
+"""
+Renames picture files according to a strict directory layout.
+
+The ideal filename is::
+
+    YYYYMMDD-Event/YYYYMMDD-Event-0000.jpg
+
+Most files are in correctly named folder, the images lack proper names though.
+This script parses the date and event name from the folder name and renames the
+images. The image number is chosen from any number found in the filename. That
+way, some order is preserved and the file can be tracked through the rename.
+"""
+
 import glob
 import os
 import re
