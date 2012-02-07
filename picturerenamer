@@ -17,6 +17,7 @@ way, some order is preserved and the file can be tracked through the rename.
 """
 
 import glob
+import optparse
 import os
 import re
 import shutil
@@ -33,7 +34,7 @@ def parse_folder_name(name):
     @return: Date, event name.
     @rtype: tuple
     """
-    pattern = re.compile(r"(2\d{3}[01]\d[0123]\d)-([^/]+)/?")
+    pattern = re.compile(r"([12]\d{3}[01]\d[0123]\d)-([^/]+)/?")
     m = pattern.match(name)
     if m is not None:
         return m.group(1), m.group(2)
@@ -52,7 +53,7 @@ def parse_file_name(name):
     @return: Date, eventname, number.
     @rtype: tuple
     """
-    pattern = re.compile(r"(2\d{3}[01]\d[0123]\d)-([^-]+)-(\d+).*\..*")
+    pattern = re.compile(r"([12]\d{3}[01]\d[0123]\d)-([^-]+)-(\d+).*\..*")
     m = pattern.match(name)
     if m is not None:
         return m.group(1), m.group(2), m.group(3)
@@ -120,17 +121,25 @@ def main():
     show_good = True
     show_folders = True
 
-    if len(sys.argv) < 2:
+    options, args = _parse_args()
+
+    if len(args) == 0:
         print "picturerenamer files..."
         sys.exit(1)
 
-    files = sys.argv[1:]
+    files = args
 
     for f in files:
+        if options.verbose:
+            print f
+
         # Skip this folder if it cannot be parsed.
         folder_info = parse_folder_name(f)
         if folder_info is None:
             continue
+
+        if options.verbose:
+            print folder_info
 
         # Print the folder.
         if show_folders:
@@ -172,6 +181,19 @@ def main():
                 # Show the images that was parsed correctly.
                 if show_good:
                     print pic, nameparts
+
+
+def _parse_args():
+    """
+    Parses the command line arguments.
+
+    @return: Tuple with options and (positional) arguments.
+    @rtype: tuple
+    """
+    parser = optparse.OptionParser(usage="", description="")
+    parser.add_option("-v", dest="verbose", action="store_true", default=False, help="Be verbose.")
+
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
