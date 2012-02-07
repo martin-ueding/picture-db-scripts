@@ -78,7 +78,7 @@ def find_number(name):
     return None
 
 
-def new_name(folder, date, name, number, suffix):
+def new_name(folder, date, name, number, tags, suffix):
     """
     Generates a new name from given data.
 
@@ -95,7 +95,7 @@ def new_name(folder, date, name, number, suffix):
     @return: Generated filename.
     @rtype: str
     """
-    n = "%s/%s-%s-%s.%s" % (folder, date, name, number, suffix)
+    n = "%s/%s-%s-%s%s.%s" % (folder, date, name, number, tags, suffix)
     n = n.replace(r"//", r"/")
     return n
 
@@ -115,6 +115,15 @@ def ask_rename(old, new):
     answer = raw_input("rename? [y/N] ")
     if answer == "y":
         shutil.move(old, new)
+
+
+def find_tags(filename):
+    pattern = re.compile(r"[^#]*(#[^.]+)\..*")
+    m = pattern.match(filename)
+    if m is not None:
+        return m.group(1)
+    else:
+        return ""
 
 
 def main():
@@ -166,7 +175,7 @@ def main():
 
                 # Find the next free number, increase if number is not free.
                 while True:
-                    newname = new_name(f, folder_info[0], folder_info[1], number, suffix)
+                    newname = new_name(f, folder_info[0], folder_info[1], number, find_tags(os.path.basename(pic)), suffix)
                     if not os.path.exists(newname):
                         break
                     number = str(int(number)+1)
