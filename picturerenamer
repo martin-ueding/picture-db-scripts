@@ -23,6 +23,8 @@ import re
 import shutil
 import sys
 
+import prettytable
+
 def parse_folder_name(name):
     """
     Parses date and event name from a folder name.
@@ -100,21 +102,22 @@ def new_name(folder, date, name, number, tags, suffix):
     return n
 
 
-def ask_rename(old, new):
+def ask_rename(renames):
     """
-    Renames a file after asking.
+    Renames a batch of files after asking.
 
-    Asks the user whether the file should be renamed. If accepted, the file is
-    renamed.
-
-    @param old: Old filename.
-    @type old: str
-    @param new: New filename.
-    @type new: str
+    @param new: List with lists of old and new names.
+    @type new: list
     """
-    answer = raw_input("rename? [y/N] ")
+    prettytable.print_table(
+        ["old name", "new name"],
+        renames,
+    )
+    answer = raw_input("rename this batch? [y/N] ")
     if answer == "y":
-        shutil.move(old, new)
+        for old, new in renames:
+            if not os.path.isfile(new):
+                shutil.move(old, new)
 
 
 def find_tags(filename):
@@ -154,10 +157,13 @@ def main():
         if show_folders:
             print f, folder_info
 
+        renames = []
+
         # Iterate through all the pictures.
         for pic in sorted(glob.iglob(f+"/*")):
             if not os.path.isfile(pic):
                 continue
+
 
             # Try to parse the picture file name.
             nameparts = parse_file_name(os.path.basename(pic))
@@ -176,20 +182,22 @@ def main():
                 # Find the next free number, increase if number is not free.
                 while True:
                     newname = new_name(f, folder_info[0], folder_info[1], number, find_tags(os.path.basename(pic)), suffix)
-                    if not os.path.exists(newname):
+                    if not os.path.exists(newname) and newname not in [rename[1] for rename in renames]:
                         break
                     number = str(int(number)+1)
 
-                # Print old and new file name.
-                print pic.ljust(50, '.'), newname.ljust(50),
+                renames.append([pic, newname])
 
-                # Rename.
-                ask_rename(pic, newname)
 
             else:
                 # Show the images that was parsed correctly.
                 if show_good:
                     print pic, nameparts
+
+        # Rename.
+        if len(renames) > 0:
+            print
+            ask_rename(renames)
 
 
 def _parse_args():
