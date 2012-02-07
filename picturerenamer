@@ -120,6 +120,10 @@ def main():
     show_good = True
     show_folders = True
 
+    if len(sys.argv) < 2:
+        print "picturerenamer files..."
+        sys.exit(1)
+
     files = sys.argv[1:]
 
     for f in files:
