@@ -7,6 +7,6 @@ setup(
     author = "Martin Ueding",
     author_email = "dev@martin-ueding.de",
     name = "picture_renamer",
-    scripts = ["picture_renamer"],
+    scripts = ["picturerenamer"],
     version = "1.1",
 )
