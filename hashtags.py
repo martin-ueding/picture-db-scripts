@@ -5,15 +5,37 @@
 
 import re
 
+class Tag(object):
+    def __init__(self, text):
+        """
+        @param text: Human readable text.
+        """
+        self.text = text
+
+    @staticmethod
+    def from_encoded(encoded):
+        return Tag(re.sub(r"_", " ", encoded))
+
+    def encode(self):
+        return re.sub(" ", "_", self.text)
+
+    def __str__(self):
+        return self.text
+
+    def __repr__(self):
+        return "Tag('%s')" % self.text
+
+    def __lt__(self, other):
+        return self.text < other.text
+
+    def __eq__(self, other):
+        return self.text == other.text
+
+
 def parse_filename(name):
     """
     Parses the filename to find the hashtags.
 
-    >>> parse_filename("20120204-Klopapierberg-9240#Martin_Ueding.jpg")
-    ('20120204-Klopapierberg-9240.jpg', ['Martin_Ueding'])
-
-    >>> parse_filename("20120204-Klopapierberg-9240#Martin_Ueding#Another_Tag.jpg")
-    ('20120204-Klopapierberg-9240.jpg', ['Martin_Ueding', 'Another_Tag'])
 
     @param name: Filename with tags.
     @type name: str
@@ -30,7 +52,7 @@ def parse_filename(name):
 
         for tag in taglist:
             if len(tag) > 0:
-                result.append(tag)
+                result.append(Tag.from_encoded(tag))
 
         filename = m.group(1)+m.group(3)
 
@@ -38,16 +60,6 @@ def parse_filename(name):
 
 
 def generate_filename(filename, tags):
-    """
-    >>> generate_filename('20120204-Klopapierberg-9240.jpg', ['Martin_Ueding', 'Another_Tag'])
-    '20120204-Klopapierberg-9240#Another_Tag#Martin_Ueding.jpg'
-
-    >>> generate_filename('20120204-Klopapierberg-9240.jpg', [])
-    '20120204-Klopapierberg-9240.jpg'
-
-    >>> generate_filename('20120204-Klopapierberg-9240.jpg', ['Martin_Ueding'])
-    '20120204-Klopapierberg-9240#Martin_Ueding.jpg'
-    """
     m = re.match(r"([^.]+)(\.\w+)", filename)
 
     if not m is None:
@@ -57,6 +69,6 @@ def generate_filename(filename, tags):
         if len(tags) == 0:
             taglist = ""
         else:
-            taglist = "#"+"#".join(sorted(tags))
+            taglist = "#"+"#".join(sorted([tag.encode() for tag in tags]))
 
         return name+taglist+suffix
