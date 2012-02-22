@@ -17,7 +17,10 @@ class Tag(object):
         return Tag(re.sub(r"_", " ", encoded))
 
     def encode(self):
-        return re.sub(" ", "_", self.text)
+        print self.text
+        encoded = re.sub(" ", "_", self.text)
+        print encoded
+        return encoded
 
     def __str__(self):
         return self.text
@@ -87,6 +90,10 @@ def generate_filename(filename, tags):
         if len(tags) == 0:
             taglist = ""
         else:
-            taglist = "#"+"#".join(sorted(set([tag.encode() for tag in tags])))
+            encoded = [tag.encode() for tag in tags]
+            print encoded
+            tagset = sorted(set(encoded))
+            print tagset
+            taglist = "#"+"#".join(tagset)
 
         return name+taglist+suffix
