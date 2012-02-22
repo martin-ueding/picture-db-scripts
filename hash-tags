@@ -30,6 +30,7 @@ def main():
             print image
             image.rename()
 
+
 def _parse_args():
     """
     Parses the command line arguments.
