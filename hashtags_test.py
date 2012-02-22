@@ -37,5 +37,10 @@ class GenerateFilenameTest(unittest.TestCase):
 class ImageTest(unittest.TestCase):
     def test_currentpath(self):
         image = Image("20120204-Klopapierberg-9240.jpg")
-        image.add_tag("John Doe")
+        image.add_tag(Tag("John Doe"))
         self.assertEqual(image.current_path(), "20120204-Klopapierberg-9240#John_Doe.jpg")
+
+    def test_currentpath_empty(self):
+        image = Image("a.jpg")
+        image.add_tag(Tag("John Doe"))
+        self.assertEqual(image.current_path(), "a#John_Doe.jpg")

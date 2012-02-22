@@ -25,7 +25,7 @@ def main():
             image = hashtags.Image(f)
 
             print image
-            image.add_tag(options.tag)
+            image.add_tag(hashtags.Tag(options.tag))
             print image
 
 def _parse_args():

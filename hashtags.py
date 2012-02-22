@@ -14,12 +14,12 @@ class Tag(object):
         self.text = text
 
     @staticmethod
-    def from_encoded(encoded):
-        return Tag(re.sub(r"_", " ", encoded))
+    def from_escaped(escaped):
+        return Tag(re.sub(r"_", " ", escaped))
 
-    def encode(self):
-        encoded = re.sub(" ", "_", self.text)
-        return encoded
+    def escape(self):
+        escaped = re.sub(" ", "_", self.text)
+        return escaped
 
     def __str__(self):
         return self.text
@@ -41,10 +41,15 @@ class Image(object):
         self.filename, self.tags = parse_filename(os.path.basename(filename))
 
     def add_tag(self, tag):
+        """
+        @type tag: Tag
+        """
+        assert isinstance(tag, Tag)
         self.tags.append(tag)
 
     def current_path(self):
-        return os.path.join(self.dirname, generate_filename(self.filename, self.tags))
+        newname = generate_filename(self.filename, self.tags)
+        return os.path.join(self.dirname, newname)
 
     def __repr__(self):
         return "Image(%s)" % self.current_path()
@@ -72,7 +77,7 @@ def parse_filename(name):
 
         for tag in taglist:
             if len(tag) > 0:
-                result.append(Tag.from_encoded(tag))
+                result.append(Tag.from_escaped(tag))
 
         filename = m.group(1) + m.group(3)
 
@@ -89,8 +94,8 @@ def generate_filename(filename, tags):
         if len(tags) == 0:
             taglist = ""
         else:
-            encoded = [tag.encode() for tag in tags]
-            tagset = sorted(set(encoded))
+            escaped = [tag.escape() for tag in tags]
+            tagset = sorted(set(escaped))
             taglist = "#"+"#".join(tagset)
 
         return name+taglist+suffix
