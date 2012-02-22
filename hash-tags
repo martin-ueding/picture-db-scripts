@@ -12,6 +12,7 @@ def main():
     options = _parse_args()
 
     print options
+    print
 
     if options.action == 'show':
         for f in sorted(options.filenames + [options.tag]):
