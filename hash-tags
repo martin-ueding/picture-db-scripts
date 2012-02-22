@@ -27,6 +27,7 @@ def main():
             print image
             image.add_tag(hashtags.Tag(options.tag))
             print image
+            image.rename()
 
 def _parse_args():
     """
