@@ -69,6 +69,6 @@ def generate_filename(filename, tags):
         if len(tags) == 0:
             taglist = ""
         else:
-            taglist = "#"+"#".join(sorted([tag.encode() for tag in tags]))
+            taglist = "#"+"#".join(sorted(set([tag.encode() for tag in tags])))
 
         return name+taglist+suffix

@@ -28,3 +28,6 @@ class GenerateFilenameTest(unittest.TestCase):
 
     def test_3(self):
         assert generate_filename('20120204-Klopapierberg-9240.jpg', [Tag('Martin Ueding')]) == '20120204-Klopapierberg-9240#Martin_Ueding.jpg'
+
+    def test_4(self):
+        assert generate_filename('20120204-Klopapierberg-9240.jpg', [Tag('Martin Ueding'), Tag('Martin Ueding')]) == '20120204-Klopapierberg-9240#Martin_Ueding.jpg'
