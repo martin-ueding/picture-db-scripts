@@ -8,6 +8,8 @@ import argparse
 def main():
     options = _parse_args()
 
+    print options
+
 
 def _parse_args():
     """
@@ -18,7 +20,7 @@ def _parse_args():
     """
     parser = argparse.ArgumentParser(usage="%(prog)s action filenames", description="")
     parser.add_argument('action', metavar='action', type=str, nargs=1, help='Action.')
-    parser.add_argument('filenames', metavar='filenames', type=str, nargs='+', help='Action.')
+    parser.add_argument('filenames', metavar='filenames', type=str, nargs='+', help='Files to process.')
     #parser.add_argument("", dest="", type="", default=, help=)
     #parser.add_argument('--version', action='version', version='<the version>')
 
