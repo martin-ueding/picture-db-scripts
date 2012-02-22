@@ -32,6 +32,25 @@ class Tag(object):
         return self.text == other.text
 
 
+class Image(object):
+    def __init__(self, filename):
+        self.origname = filename
+        self.dirname = os.path.dirname(filename)
+        self.filename, self.tags = parse_filename(os.path.basename(filename))
+
+    def add_tag(self, tag):
+        self.tags.append(tag)
+
+    def current_path(self):
+        return os.path.join(self.dirname, generate_filename(self.filename, self.tags))
+
+    def __repr__(self):
+        return "Image(%s)" % self.current_path()
+
+    def rename(self):
+        os.rename(self.origname, self.current_path())
+
+
 def parse_filename(name):
     """
     Parses the filename to find the hashtags.

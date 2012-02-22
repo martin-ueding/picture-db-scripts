@@ -31,3 +31,8 @@ class GenerateFilenameTest(unittest.TestCase):
 
     def test_4(self):
         assert generate_filename('20120204-Klopapierberg-9240.jpg', [Tag('Martin Ueding'), Tag('Martin Ueding')]) == '20120204-Klopapierberg-9240#Martin_Ueding.jpg'
+class ImageTest(unittest.TestCase):
+    def test_currentpath(self):
+        image = Image("20120204-Klopapierberg-9240.jpg")
+        image.add_tag("John Doe")
+        self.assertEqual(image.current_path(), "20120204-Klopapierberg-9240#John_Doe.jpg")
