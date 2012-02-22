@@ -38,4 +38,25 @@ def parse_filename(name):
 
 
 def generate_filename(filename, tags):
-    pass
+    """
+    >>> generate_filename('20120204-Klopapierberg-9240.jpg', ['Martin_Ueding', 'Another_Tag'])
+    '20120204-Klopapierberg-9240#Another_Tag#Martin_Ueding.jpg'
+
+    >>> generate_filename('20120204-Klopapierberg-9240.jpg', [])
+    '20120204-Klopapierberg-9240.jpg'
+
+    >>> generate_filename('20120204-Klopapierberg-9240.jpg', ['Martin_Ueding'])
+    '20120204-Klopapierberg-9240#Martin_Ueding.jpg'
+    """
+    m = re.match(r"([^.]+)(\.\w+)", filename)
+
+    if not m is None:
+        name = m.group(1)
+        suffix = m.group(2)
+
+        if len(tags) == 0:
+            taglist = ""
+        else:
+            taglist = "#"+"#".join(sorted(tags))
+
+        return name+taglist+suffix
