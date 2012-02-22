@@ -43,8 +43,11 @@ class Image(object):
     def add_tag(self, tag):
         """
         @type tag: Tag
+        @raise TypeError: Raised if not a hashtags.Tag given.
         """
-        assert isinstance(tag, Tag)
+        if not isinstance(tag, Tag):
+            raise TypeError("Image::add_tag(hashtags.Tag)")
+
         self.tags.append(tag)
 
     def current_path(self):

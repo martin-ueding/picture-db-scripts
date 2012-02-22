@@ -44,3 +44,8 @@ class ImageTest(unittest.TestCase):
         image = Image("a.jpg")
         image.add_tag(Tag("John Doe"))
         self.assertEqual(image.current_path(), "a#John_Doe.jpg")
+
+    def test_add_tag_wrong_type(self):
+        image = Image("a.jpg")
+        with self.assertRaises(TypeError):
+            image.add_tag("This is not a hashtag.Tag object")
