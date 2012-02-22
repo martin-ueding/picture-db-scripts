@@ -33,6 +33,7 @@ class GenerateFilenameTest(unittest.TestCase):
         name = generate_filename('20120204-Klopapierberg-9240.jpg', [Tag('Martin Ueding'), Tag('Martin Ueding')])
         self.assertEqual(name, '20120204-Klopapierberg-9240#Martin_Ueding.jpg')
 
+
 class ImageTest(unittest.TestCase):
     def test_currentpath(self):
         image = Image("20120204-Klopapierberg-9240.jpg")
