@@ -72,7 +72,7 @@ def parse_filename(name):
             if len(tag) > 0:
                 result.append(Tag.from_encoded(tag))
 
-        filename = m.group(1)+m.group(3)
+        filename = m.group(1) + m.group(3)
 
     return filename, result
 
