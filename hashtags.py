@@ -36,7 +36,6 @@ def parse_filename(name):
     """
     Parses the filename to find the hashtags.
 
-
     @param name: Filename with tags.
     @type name: str
     @return: Filename, list with tags.
