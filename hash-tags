@@ -4,12 +4,29 @@
 # Copyright © 2012 Martin Ueding <dev@martin-ueding.de>
 
 import argparse
+import os.path
+
+import hashtags
 
 def main():
     options = _parse_args()
 
     print options
 
+    if options.action == 'show':
+        for f in sorted(options.filenames + [options.tag]):
+            f = os.path.basename(f)
+
+            name, tags = hashtags.parse_filename(f)
+            print name, ', '.join(tags)
+
+    if options.action == 'add':
+        for f in sorted(options.filenames):
+            image = hashtags.Image(f)
+
+            print image
+            image.add_tag(options.tag)
+            print image
 
 def _parse_args():
     """
@@ -18,8 +35,9 @@ def _parse_args():
     @return: Namespace with arguments.
     @rtype: Namespace
     """
-    parser = argparse.ArgumentParser(usage="%(prog)s action filenames", description="")
-    parser.add_argument('action', metavar='action', type=str, nargs=1, help='Action.')
+    parser = argparse.ArgumentParser(usage="%(prog)s action [tag] filenames", description="")
+    parser.add_argument('action', metavar='action', type=str, help='Action.')
+    parser.add_argument('tag', metavar='tag', type=str, nargs='?', help='Tag to add or remove.')
     parser.add_argument('filenames', metavar='filenames', type=str, nargs='+', help='Files to process.')
     #parser.add_argument("", dest="", type="", default=, help=)
     #parser.add_argument('--version', action='version', version='<the version>')
