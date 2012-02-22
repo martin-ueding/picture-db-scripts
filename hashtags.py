@@ -4,6 +4,7 @@
 # Copyright © 2012 Martin Ueding <dev@martin-ueding.de>
 
 import re
+import os.path
 
 class Tag(object):
     def __init__(self, text):
