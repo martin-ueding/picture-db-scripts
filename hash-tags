@@ -8,17 +8,16 @@ import os.path
 
 import prettytable
 
-import hashtags
+import picturedb
 
 def main():
     options = _parse_args()
 
     if options.action == 'show':
         for f in sorted(options.filenames + [options.tag]):
-            f = os.path.basename(f)
+            image = picturedb.Image(f)
 
-            name, tags = hashtags.parse_filename(f)
-            print name, ', '.join(tags)
+            print image
 
     if options.action == 'add':
         table_data = []

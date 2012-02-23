@@ -5,7 +5,7 @@
 
 import unittest
 
-from hashtags import *
+from picturedb import *
 
 class ParseFilenameTest(unittest.TestCase):
     def test_1(self):
