@@ -8,11 +8,10 @@ setup(
     author_email = "dev@martin-ueding.de",
     name = "picture_db_scripts",
     py_modules = [
-        "hashtags",
+        "picturedb",
     ],
     scripts = [
-        "hash-tags",
-        "picturerenamer",
+        "hashtag",
     ],
     version = "1.1",
 )
