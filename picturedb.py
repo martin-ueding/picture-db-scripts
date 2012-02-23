@@ -104,16 +104,28 @@ class Image(object):
         self.prefix = m.group(1)
         self.suffix = m.group(3)
 
+        self._parse_prefix()
+
+    def _parse_prefix(self):
         prefixparts = self.prefix.split('-')
-        if len(prefixparts) < 3:
+
+        if len(prefixparts) >= 3:
+            if self.date == "":
+                self.date = prefixparts[0]
+            if self.event == "":
+                self.event = '-'.join(prefixparts[1:-1])
+
+            self.number = prefixparts[-1]
+
+        # The number could not be parsed yet, try to find a number.
+        if self.number == "":
+            numbers = re.findall(r"\d+", self.prefix)
+            if len(numbers) > 0:
+                self.number = numbers[-1]
+
+        # In case anything is missing, this could not be parsed.
+        if self.date == "" or self.event == "" or self.number == "":
             raise PrefixParseError('Could not parse "%s".' % self.prefix)
-
-        if self.date == "":
-            self.date = prefixparts[0]
-        if self.event == "":
-            self.event = '-'.join(prefixparts[1:-1])
-
-        self.number = prefixparts[-1]
 
     def _parse_folder_name(self):
         """

@@ -29,8 +29,8 @@ def ask_rename(renames):
     """
     Renames a batch of files after asking.
 
-    @param new: List with lists of old and new names.
-    @type new: list
+    @param renames: List with lists of old and new names.
+    @type renames: list
     """
     prettytable.print_table(
         ["old name", "new name"],
