@@ -1,6 +1,6 @@
 # Copyright (c) 2012 Martin Ueding <dev@martin-ueding.de>
 
-pythonfiles := $(filter-out setup.py,$(wildcard *.py)) picturerenamer hash-tags
+pythonfiles := $(filter-out setup.py,$(wildcard *.py)) hashtag
 testfiles := $(wildcard *_test.py)
 
 test:
