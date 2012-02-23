@@ -35,7 +35,7 @@ def main():
 
         if oldname != newname:
             images.append(image)
-            table_data.append([dirname, oldname, newname])
+            table_data.append([dirname, oldname[:50], newname])
 
     if len(table_data) == 0:
         return
