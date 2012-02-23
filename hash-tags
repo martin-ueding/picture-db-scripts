@@ -5,6 +5,7 @@
 
 import argparse
 import os.path
+import sys
 
 import prettytable
 
@@ -13,46 +14,46 @@ import picturedb
 def main():
     options = _parse_args()
 
-    if options.action == 'show':
-        for f in sorted(options.filenames + [options.tag]):
-            image = picturedb.Image(f)
-
-            print image
-
-    if options.action == 'add':
-        table_data = []
-        images = []
-        for f in sorted(options.filenames):
-            image = hashtags.Image(f)
-
-            dirname = os.path.dirname(f)
-            oldname = os.path.basename(f)
-            image.add_tag(hashtags.Tag(options.tag))
-            newname = os.path.basename(image.current_path())
-
-            if oldname != newname:
-
-                images.append(image)
-
-                table_data.append([dirname, oldname, newname])
-
-        if len(table_data) == 0:
-            return
-
-        prettytable.print_table(
-            ["directory", "old name", "new name"],
-            table_data
-        )
-
+    if not options.add is None:
+        print "Tags to add:"
+        print ', '.join(sorted(set(options.add)))
         print
-        answer = raw_input("Rename files? [Y/n] ")
 
-        if answer != "n":
-            for image in images:
-                try:
-                    image.rename()
-                except OSError as e:
-                    print image, e
+    table_data = []
+    images = []
+    for f in sorted(options.filenames):
+        image = picturedb.Image(f)
+
+        dirname = os.path.dirname(f)
+        oldname = os.path.basename(f)
+    
+        if not options.add is None:
+            for tag in options.add:
+                image.add_tag(picturedb.Tag(tag))
+
+        newname = os.path.basename(image.current_path())
+
+        if oldname != newname:
+            images.append(image)
+            table_data.append([dirname, oldname, newname])
+
+    if len(table_data) == 0:
+        return
+
+    prettytable.print_table(
+        ["directory", "old name", "new name"],
+        table_data
+    )
+
+    print
+    answer = raw_input("Rename files? [Y/n] ")
+
+    if answer != "n":
+        for image in images:
+            try:
+                image.rename()
+            except OSError as e:
+                print image, e
 
 
 def _parse_args():
@@ -62,9 +63,8 @@ def _parse_args():
     @return: Namespace with arguments.
     @rtype: Namespace
     """
-    parser = argparse.ArgumentParser(usage="%(prog)s action [tag] filenames", description="")
-    parser.add_argument('action', metavar='action', type=str, help='Action.')
-    parser.add_argument('tag', metavar='tag', type=str, nargs='?', help='Tag to add or remove.')
+    parser = argparse.ArgumentParser(usage="%(prog)s [options --] filenames", description="")
+    parser.add_argument('-a', "--add", metavar='tags', type=str, nargs='*', help='Tag to add.')
     parser.add_argument('filenames', metavar='filenames', type=str, nargs='+', help='Files to process.')
     #parser.add_argument("", dest="", type="", default=, help=)
     #parser.add_argument('--version', action='version', version='<the version>')
