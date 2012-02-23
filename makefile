@@ -16,4 +16,4 @@ html/index.html: $(pythonfiles)
 clean:
 	$(RM) *.pyc *.pyo
 	$(RM) -r html
-	$(RM) picturerenamerc
+	$(RM) hashtagc
