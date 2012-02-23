@@ -6,6 +6,8 @@
 import re
 import os.path
 
+next_id = 1
+
 class Tag(object):
     def __init__(self, text):
         """
@@ -67,7 +69,10 @@ class Image(object):
         return "Image(%s)" % self.current_path()
 
     def rename(self):
-        os.rename(self.origname, self.current_path())
+        newname = self.current_path()
+        if os.path.isfile(newname):
+            raise OSError('File "%s" already exists, no rename.' % newname)
+        os.rename(self.origname, newname)
 
     def _tagstring(self):
         tagstring = ""
@@ -123,9 +128,18 @@ class Image(object):
             if len(numbers) > 0:
                 self.number = numbers[-1]
 
+        if self.number == "":
+            global next_id
+            self.number = str(next_id)
+            next_id += 1
+
         # In case anything is missing, this could not be parsed.
-        if self.date == "" or self.event == "" or self.number == "":
-            raise PrefixParseError('Could not parse "%s".' % self.prefix)
+        if self.date == "":
+            raise DateParseError('Could not parse "%s".' % self.prefix)
+        if self.event == "":
+            raise EventParseError('Could not parse "%s".' % self.prefix)
+        if self.number == "":
+            raise NumberParseError('Could not parse "%s".' % self.prefix)
 
     def _parse_folder_name(self):
         """
@@ -134,7 +148,7 @@ class Image(object):
         if len(self.dirname) == 0:
             return
 
-        pattern = re.compile(r"([12]\d{3}[01]\d[0123]\d)-([^/]+)/?")
+        pattern = re.compile(r"([012]\d{3}[01]\d[0123]\d)-([^/]+)/?")
         album_dir = os.path.basename(self.dirname)
         m = pattern.match(album_dir)
         if m is None:
@@ -154,4 +168,13 @@ class FolderParseError(PictureParseError):
     pass
 
 class PrefixParseError(FilenameParseError):
+    pass
+
+class NumberParseError(PrefixParseError):
+    pass
+
+class EventParseError(PrefixParseError, FolderParseError):
+    pass
+
+class DateParseError(PrefixParseError, FolderParseError):
     pass

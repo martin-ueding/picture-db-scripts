@@ -45,19 +45,19 @@ class ParseWrongNames(unittest.TestCase):
         image = Image("20120204-Klopapierberg/a.jpg")
         self.assertEqual(image.date, '20120204')
         self.assertEqual(image.event, 'Klopapierberg')
-        self.assertEqual(image.number, 'a')
+        self.assertGreaterEqual(image.number, '1')
         self.assertEqual(image.suffix, 'jpg')
 
     def test_single_number(self):
-        with self.assertRaises(PrefixParseError):
+        with self.assertRaises(DateParseError):
             image = Image("1.jpg")
-            self.assertEqual(image.number, '1')
+            self.assertGreaterEqual(image.number, '1')
             self.assertEqual(image.suffix, 'jpg')
 
     def test_single_letter(self):
-        with self.assertRaises(PrefixParseError):
+        with self.assertRaises(DateParseError):
             image = Image("a.jpg")
-            self.assertEqual(image.number, 'a')
+            self.assertGreaterEqual(image.number, '1')
             self.assertEqual(image.suffix, 'jpg')
 
 
