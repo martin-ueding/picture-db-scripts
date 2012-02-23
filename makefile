@@ -15,5 +15,7 @@ html/index.html: $(pythonfiles)
 .PHONY: clean
 clean:
 	$(RM) *.pyc *.pyo
+	$(RM) -r build
+	$(RM) -r dist
 	$(RM) -r html
 	$(RM) hashtagc
