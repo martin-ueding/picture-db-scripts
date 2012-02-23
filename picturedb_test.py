@@ -48,6 +48,18 @@ class ParseWrongNames(unittest.TestCase):
         self.assertEqual(image.number, 'a')
         self.assertEqual(image.suffix, 'jpg')
 
+    def test_single_number(self):
+        with self.assertRaises(PrefixParseError):
+            image = Image("1.jpg")
+            self.assertEqual(image.number, '1')
+            self.assertEqual(image.suffix, 'jpg')
+
+    def test_single_letter(self):
+        with self.assertRaises(PrefixParseError):
+            image = Image("a.jpg")
+            self.assertEqual(image.number, 'a')
+            self.assertEqual(image.suffix, 'jpg')
+
 
 class GenerateFilenameTest(unittest.TestCase):
     def test_tags(self):
