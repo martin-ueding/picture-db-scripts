@@ -35,23 +35,23 @@ class Tag(object):
 
 
 class Image(object):
-    """
-    basename: file name
-    date: YYYYMMDD string
-    dirname: folder name
-    event: event name
-    number: iterator number in image
-    origname: original path
-    prefix: combined date, event and number
-    suffix: filetype
-    """
+
     def __init__(self, filename):
+        self.basename = ""
+        self.date = ""
+        self.dirname = ""
+        self.event = ""
+        self.number = ""
+        self.origname = ""
+        self.prefix = ""
+        self.suffix = ""
+
         self.origname = filename
         self.dirname = os.path.dirname(filename)
         self.basename = os.path.basename(filename)
 
-        self.parse_filename()
         self.parse_folder_name()
+        self.parse_filename()
 
     def add_tag(self, tag):
         """
@@ -69,42 +69,77 @@ class Image(object):
     def rename(self):
         os.rename(self.origname, self.current_path())
 
-    def current_path(self):
+    def tagstring(self):
         tagstring = ""
         if len(self.tags) > 0:
             tagstring = "#" + "#".join(sorted(set([tag.escape() for tag in self.tags])))
 
-        filename = "%s-%s-%s%s.%s" % (self.date, self.event, self.number, tagstring, self.suffix)
+        return tagstring
 
-        return os.path.join(os.path.dirname, filename)
+    def current_path(self):
+        filename = "%s-%s-%s%s.%s" % (
+            self.date, self.event, self.number, self.tagstring(), self.suffix
+        )
+
+        return os.path.join(self.dirname, filename)
 
     def parse_filename(self):
         """
         Parses the filename to find the hashtags.
         """
-        m = re.match(r"([^#]+)(#.*)+(\.\w+)", self.basename)
+        m = re.match(r"([^#]+)(#.*)*\.(\w+)", self.basename)
 
         self.tags = []
 
-        if not m is None:
+        if m is None:
+            raise FilenameParseError('Could not parse "%s".' % self.basename)
+
+        if not m.group(2) is None:
             taglist = m.group(2).split("#")
 
             for tag in taglist:
                 if len(tag) > 0:
                     self.tags.append(Tag.from_escaped(tag))
 
-            self.prefix = m.group(1)
-            nameparts = self.prefix.split('-')
-            self.number = nameparts[2]
+        self.prefix = m.group(1)
+        self.suffix = m.group(3)
 
-            self.suffix = m.group(3)
+        prefixparts = self.prefix.split('-')
+        if len(prefixparts) < 3:
+            raise PrefixParseError('Could not parse "%s".' % self.prefix)
+
+        if self.date == "":
+            self.date = prefixparts[0]
+        if self.event == "":
+            self.event = '-'.join(prefixparts[1:-1])
+
+        self.number = prefixparts[-1]
 
     def parse_folder_name(self):
         """
         Parses date and event name from a folder name.
         """
+        if len(self.dirname) == 0:
+            return
+
         pattern = re.compile(r"([12]\d{3}[01]\d[0123]\d)-([^/]+)/?")
-        m = pattern.match(os.path.basename(self.dirname))
-        if m is not None:
-            self.date = m.group(1)
-            self.event = m.group(2)
+        album_dir = os.path.basename(self.dirname)
+        m = pattern.match(album_dir)
+        if m is None:
+            raise FolderParseError('Could not parse "%s".' % album_dir)
+
+        self.date = m.group(1)
+        self.event = m.group(2)
+
+
+class PictureParseError(Exception):
+    pass
+
+class FilenameParseError(PictureParseError):
+    pass
+
+class FolderParseError(PictureParseError):
+    pass
+
+class PrefixParseError(FilenameParseError):
+    pass
