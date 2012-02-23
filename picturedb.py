@@ -71,7 +71,17 @@ class Image(object):
     def rename(self):
         newname = self.current_path()
         if os.path.isfile(newname):
-            raise OSError('File "%s" already exists, no rename.' % newname)
+            print 'File "%s" already exists.' % newname
+            answer = raw_input('Do you want to increase the number? [Y/n] ')
+
+            if answer != "n":
+                while os.path.isfile(newname):
+                    self.number = str(int(self.number) +1)
+                    newname = self.current_path()
+
+            print 'Now using "%s".' % newname
+
+        assert not os.path.isfile(newname)
         os.rename(self.origname, newname)
 
     def _tagstring(self):
