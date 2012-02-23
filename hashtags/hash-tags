@@ -1,0 +1,77 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Copyright © 2012 Martin Ueding <dev@martin-ueding.de>
+
+import argparse
+import os.path
+
+import prettytable
+
+import hashtags
+
+def main():
+    options = _parse_args()
+
+    if options.action == 'show':
+        for f in sorted(options.filenames + [options.tag]):
+            f = os.path.basename(f)
+
+            name, tags = hashtags.parse_filename(f)
+            print name, ', '.join(tags)
+
+    if options.action == 'add':
+        table_data = []
+        images = []
+        for f in sorted(options.filenames):
+            image = hashtags.Image(f)
+
+            dirname = os.path.dirname(f)
+            oldname = os.path.basename(f)
+            image.add_tag(hashtags.Tag(options.tag))
+            newname = os.path.basename(image.current_path())
+
+            if oldname != newname:
+
+                images.append(image)
+
+                table_data.append([dirname, oldname, newname])
+
+        if len(table_data) == 0:
+            return
+
+        prettytable.print_table(
+            ["directory", "old name", "new name"],
+            table_data
+        )
+
+        print
+        answer = raw_input("Rename files? [Y/n] ")
+
+        if answer != "n":
+            for image in images:
+                try:
+                    image.rename()
+                except OSError as e:
+                    print image, e
+
+
+def _parse_args():
+    """
+    Parses the command line arguments.
+
+    @return: Namespace with arguments.
+    @rtype: Namespace
+    """
+    parser = argparse.ArgumentParser(usage="%(prog)s action [tag] filenames", description="")
+    parser.add_argument('action', metavar='action', type=str, help='Action.')
+    parser.add_argument('tag', metavar='tag', type=str, nargs='?', help='Tag to add or remove.')
+    parser.add_argument('filenames', metavar='filenames', type=str, nargs='+', help='Files to process.')
+    #parser.add_argument("", dest="", type="", default=, help=)
+    #parser.add_argument('--version', action='version', version='<the version>')
+
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    main()
