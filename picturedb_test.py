@@ -34,16 +34,20 @@ class ParseFilenameTest(unittest.TestCase):
 
 
 class GenerateFilenameTest(unittest.TestCase):
-    def test_1(self):
+    def test_tags(self):
         image = Image('20120204-Klopapierberg-9240.jpg')
         image.add_tag(Tag('Martin_Ueding'))
         image.add_tag(Tag('Another Tag'))
         image.add_tag(Tag('Another Tag'))
         self.assertEqual(image.current_path(), '20120204-Klopapierberg-9240#Another_Tag#Martin_Ueding.jpg')
 
-    def test_2(self):
+    def test_without_folder(self):
         image = Image('20120204-Klopapierberg-9240.jpg')
         self.assertEqual(image.current_path(), '20120204-Klopapierberg-9240.jpg')
+
+    def test_with_folder(self):
+        image = Image('20120204-Klopapierberg/00000000-Foo-9240.jpg')
+        self.assertEqual(image.current_path(), '20120204-Klopapierberg/20120204-Klopapierberg-9240.jpg')
 
 
 class ImageTest(unittest.TestCase):
