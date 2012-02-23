@@ -50,8 +50,8 @@ class Image(object):
         self.dirname = os.path.dirname(filename)
         self.basename = os.path.basename(filename)
 
-        self.parse_folder_name()
-        self.parse_filename()
+        self._parse_folder_name()
+        self._parse_filename()
 
     def add_tag(self, tag):
         """
@@ -69,7 +69,7 @@ class Image(object):
     def rename(self):
         os.rename(self.origname, self.current_path())
 
-    def tagstring(self):
+    def _tagstring(self):
         tagstring = ""
         if len(self.tags) > 0:
             tagstring = "#" + "#".join(sorted(set([tag.escape() for tag in self.tags])))
@@ -78,12 +78,12 @@ class Image(object):
 
     def current_path(self):
         filename = "%s-%s-%s%s.%s" % (
-            self.date, self.event, self.number, self.tagstring(), self.suffix
+            self.date, self.event, self.number, self._tagstring(), self.suffix
         )
 
         return os.path.join(self.dirname, filename)
 
-    def parse_filename(self):
+    def _parse_filename(self):
         """
         Parses the filename to find the hashtags.
         """
@@ -115,7 +115,7 @@ class Image(object):
 
         self.number = prefixparts[-1]
 
-    def parse_folder_name(self):
+    def _parse_folder_name(self):
         """
         Parses date and event name from a folder name.
         """
