@@ -1,13 +1,15 @@
 # Copyright (c) 2012 Martin Ueding <dev@martin-ueding.de>
 
-pythonfiles := $(filter-out setup.py,$(wildcard *.py))
+pythonfiles := $(filter-out setup.py,$(wildcard *.py)) picturerenamer hash-tags
 testfiles := $(wildcard *_test.py)
 
 test:
 	python -m doctest $(pythonfiles)
 	python -m unittest $(testfiles:.py=)
 
-html/index.html: picturerenamer
+doc: html/index.html
+
+html/index.html: $(pythonfiles)
 	epydoc -v $^
 
 .PHONY: clean
