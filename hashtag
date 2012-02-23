@@ -19,9 +19,27 @@ def main():
         print ', '.join(sorted(set(options.add)))
         print
 
+    handle_files(options.filenames, options)
+
+
+
+def handle_folder(path, options):
+    files = []
+
+    for f in os.listdir(path):
+        if os.path.isdir(f):
+            handle_folder(f, options)
+        else:
+            files.append(f)
+
+    if len(files) > 0:
+        handle_files(files, options)
+
+
+def handle_files(files, options):
     table_data = []
     images = []
-    for f in sorted(options.filenames):
+    for f in sorted(files):
         image = picturedb.Image(f)
 
         dirname = os.path.dirname(f)
