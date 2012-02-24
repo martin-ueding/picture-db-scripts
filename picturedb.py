@@ -85,6 +85,17 @@ class Image(object):
 
         self.tags.add(tag)
 
+    def remove_tag(self, tag):
+        """
+        Removes the tag, if it is there.
+
+        If the given tag is not in the set, no error is printed.
+        """
+        if not isinstance(tag, Tag):
+            raise TypeError("Image::remove_tag(hashtags.Tag)")
+
+        self.tags.discard(tag)
+
     def __repr__(self):
         return "Image(%s)" % self.current_path()
 

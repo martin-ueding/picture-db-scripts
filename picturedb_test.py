@@ -75,6 +75,12 @@ class GenerateFilenameTest(unittest.TestCase):
         image.add_tag(Tag('Another Tag'))
         self.assertEqual(image.current_path(), '20120204-Klopapierberg-9240#Another_Tag#Martin_Ueding.jpg')
 
+    def test_tag_remove(self):
+        image = Image('20120204-Klopapierberg-9240#Foobar.jpg')
+        image.remove_tag(Tag('Foobar'))
+        image.add_tag(Tag('Another Tag'))
+        self.assertEqual(image.current_path(), '20120204-Klopapierberg-9240#Another_Tag.jpg')
+
     def test_without_folder(self):
         image = Image('20120204-Klopapierberg-9240.jpg')
         self.assertEqual(image.current_path(), '20120204-Klopapierberg-9240.jpg')
