@@ -11,6 +11,8 @@ import prettytable
 
 import picturedb
 
+__docformat__ = "restructuredtext en"
+
 def main():
     options = _parse_args()
 
@@ -43,7 +45,7 @@ def path_prepender(path):
     """
     Generates a filter function that prepends the given path to each list item.
 
-    @rtype: function
+    :rtype: function
     """
     def filter(filename):
         """
@@ -104,8 +106,8 @@ def _parse_args():
     """
     Parses the command line arguments.
 
-    @return: Namespace with arguments.
-    @rtype: Namespace
+    :return: Namespace with arguments.
+    :rtype: Namespace
     """
     parser = argparse.ArgumentParser(usage="%(prog)s [options --] filenames", description="")
     parser.add_argument('-a', "--add", metavar='tags', type=str, nargs='*', help='Tag to add.')

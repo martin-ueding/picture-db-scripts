@@ -21,13 +21,15 @@ import re
 import os.path
 from iptcinfo import IPTCInfo
 
+__docformat__ = "restructuredtext en"
+
 next_id = 1
 logging.basicConfig(level=logging.INFO)
 
 class Tag(object):
     def __init__(self, text):
         """
-        @param text: Human readable text.
+        :param text: Human readable text.
         """
         self.text = text
 
@@ -81,8 +83,8 @@ class Image(object):
 
     def add_tag(self, tag):
         """
-        @type tag: Tag
-        @raise TypeError: Raised if not a hashtags.Tag given.
+        :type tag: Tag
+        :raise TypeError: Raised if not a hashtags.Tag given.
         """
         if not isinstance(tag, Tag):
             raise TypeError("Image::add_tag(hashtags.Tag)")
