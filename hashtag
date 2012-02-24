@@ -71,6 +71,10 @@ def handle_files(files, options):
             for tag in options.add:
                 image.add_tag(picturedb.Tag(tag))
 
+        if not options.remove is None:
+            for tag in options.remove:
+                image.remove_tag(picturedb.Tag(tag))
+
         newname = os.path.basename(image.current_path())
 
         if image.name_changed():
@@ -105,6 +109,7 @@ def _parse_args():
     """
     parser = argparse.ArgumentParser(usage="%(prog)s [options --] filenames", description="")
     parser.add_argument('-a', "--add", metavar='tags', type=str, nargs='*', help='Tag to add.')
+    parser.add_argument('-r', "--remove", metavar='tags', type=str, nargs='*', help='Tag to remove.')
     parser.add_argument('filenames', metavar='filenames', type=str, nargs='+', help='Files to process.')
     #parser.add_argument("", dest="", type="", default=, help=)
     #parser.add_argument('--version', action='version', version='<the version>')
