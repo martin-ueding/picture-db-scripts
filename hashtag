@@ -22,7 +22,6 @@ def main():
     handle_input(options.filenames, options)
 
 
-
 def handle_input(paths, options):
     files = []
     folders = []
