@@ -63,6 +63,7 @@ class Image(object):
         self.origname = ""
         self.prefix = ""
         self.suffix = ""
+        self.iptc = None
 
         self.tags = set()
 
@@ -97,7 +98,7 @@ class Image(object):
         self.tags.discard(tag)
 
     def __repr__(self):
-        return "Image(%s)" % self.current_path()
+        return "Image('%s')" % self.current_path()
 
     def rename(self):
         newname = self.current_path()
@@ -201,13 +202,31 @@ class Image(object):
 
     def _load_iptc(self):
         try:
-            info = IPTCInfo(self.origname, force=True)
+            self.iptc = IPTCInfo(self.origname, force=True)
         except IOError as e:
             pass
         else:
-            for keyword in info.keywords:
-                print 'Found "%s" in IPTC.' % keyword
+            for keyword in self.iptc.keywords:
                 self.add_tag(Tag(keyword))
+
+    def write_iptc(self):
+        self.iptc.data['keywords'] = list(sorted(self.get_tags()))
+        self.iptc.save()
+
+    def name_changed(self):
+        return self.origname != self.current_path()
+
+    def iptc_changed(self):
+        iptc_change = sorted(map(Tag, self.iptc.keywords)) != sorted(self.get_tags())
+
+        return self.name_change() or iptc_change
+
+    def save(self):
+        if self.iptc_changed():
+            self.write_iptc()
+
+        if self.name_changed():
+            self.rename()
 
 
 class PictureParseError(Exception):
