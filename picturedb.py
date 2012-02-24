@@ -18,6 +18,7 @@ way, some order is preserved and the file can be tracked through the rename.
 
 import re
 import os.path
+from iptcinfo import IPTCInfo
 
 next_id = 1
 
@@ -71,6 +72,8 @@ class Image(object):
 
         self._parse_folder_name()
         self._parse_filename()
+
+        self._load_iptc()
 
     def add_tag(self, tag):
         """
@@ -184,6 +187,16 @@ class Image(object):
 
     def get_tags(self):
         return list(self.tags)
+
+    def _load_iptc(self):
+        try:
+            info = IPTCInfo(self.origname, force=True)
+        except IOError as e:
+            pass
+        else:
+            for keyword in info.keywords:
+                print 'Found "%s" in IPTC.' % keyword
+                self.add_tag(Tag(keyword))
 
 
 class PictureParseError(Exception):
