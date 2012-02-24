@@ -53,7 +53,7 @@ def handle_files(files, options):
 
         if oldname != newname:
             images.append(image)
-            table_data.append([dirname, oldname[:50], newname])
+            table_data.append([dirname, oldname, newname])
 
     if len(table_data) == 0:
         return
