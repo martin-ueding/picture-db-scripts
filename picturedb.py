@@ -48,6 +48,9 @@ class Tag(object):
     def __eq__(self, other):
         return self.text == other.text
 
+    def __hash__(self):
+        return hash(self.text)
+
 
 class Image(object):
     def __init__(self, filename):
@@ -59,6 +62,8 @@ class Image(object):
         self.origname = ""
         self.prefix = ""
         self.suffix = ""
+
+        self.tags = set()
 
         self.origname = filename
         self.dirname = os.path.dirname(filename)
@@ -75,7 +80,7 @@ class Image(object):
         if not isinstance(tag, Tag):
             raise TypeError("Image::add_tag(hashtags.Tag)")
 
-        self.tags.append(tag)
+        self.tags.add(tag)
 
     def __repr__(self):
         return "Image(%s)" % self.current_path()
@@ -99,7 +104,7 @@ class Image(object):
     def _tagstring(self):
         tagstring = ""
         if len(self.tags) > 0:
-            tagstring = "#" + "#".join(sorted(set([tag.escape() for tag in self.tags])))
+            tagstring = "#" + "#".join(sorted([tag.escape() for tag in self.tags]))
 
         return tagstring
 
@@ -116,8 +121,6 @@ class Image(object):
         """
         m = re.match(r"([^#]+)(#.*)*\.(\w+)", self.basename)
 
-        self.tags = []
-
         if m is None:
             raise FilenameParseError('Could not parse "%s".' % self.basename)
 
@@ -126,7 +129,7 @@ class Image(object):
 
             for tag in taglist:
                 if len(tag) > 0:
-                    self.tags.append(Tag.from_escaped(tag))
+                    self.add_tag(Tag.from_escaped(tag))
 
         self.prefix = m.group(1)
         self.suffix = m.group(3)
@@ -178,6 +181,9 @@ class Image(object):
 
         self.date = m.group(1)
         self.event = m.group(2)
+
+    def get_tags(self):
+        return list(self.tags)
 
 
 class PictureParseError(Exception):

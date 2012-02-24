@@ -14,7 +14,7 @@ class ParseFilenameTest(unittest.TestCase):
         self.assertEqual(image.event, 'Klopapierberg')
         self.assertEqual(image.number, '9240')
         self.assertEqual(image.suffix, 'jpg')
-        self.assertEqual(image.tags, [Tag('Martin Ueding')])
+        self.assertEqual(image.tags, set([Tag('Martin Ueding')]))
 
     def test_with_folder(self):
         image = Image("20120204-Klopapierberg/20120204-Klopapierberg-9240#Martin_Ueding.jpg")
@@ -22,7 +22,7 @@ class ParseFilenameTest(unittest.TestCase):
         self.assertEqual(image.event, 'Klopapierberg')
         self.assertEqual(image.number, '9240')
         self.assertEqual(image.suffix, 'jpg')
-        self.assertEqual(image.tags, [Tag('Martin Ueding')])
+        self.assertEqual(image.tags, set([Tag('Martin Ueding')]))
 
     def test_with_different_folder(self):
         image = Image("20120204-Klopapierberg/00000000-Foobar2000-9240#Martin_Ueding.jpg")
@@ -30,7 +30,7 @@ class ParseFilenameTest(unittest.TestCase):
         self.assertEqual(image.event, 'Klopapierberg')
         self.assertEqual(image.number, '9240')
         self.assertEqual(image.suffix, 'jpg')
-        self.assertEqual(image.tags, [Tag('Martin Ueding')])
+        self.assertEqual(image.tags, set([Tag('Martin Ueding')]))
 
 
 class ParseWrongNames(unittest.TestCase):
