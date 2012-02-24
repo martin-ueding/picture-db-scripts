@@ -88,7 +88,7 @@ def handle_files(files, options):
     if answer != "n":
         for image in images:
             try:
-                image.rename()
+                image.save()
             except OSError as e:
                 print image, e
 
