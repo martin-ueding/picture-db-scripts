@@ -59,6 +59,10 @@ def handle_files(files, options):
     table_data = []
     images = []
     for f in sorted(files):
+        # Skip backup files.
+        if f.endswith("~"):
+            continue
+
         image = picturedb.Image(f)
 
         dirname = os.path.dirname(f)
