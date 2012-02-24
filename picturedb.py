@@ -16,11 +16,13 @@ images. The image number is chosen from any number found in the filename. That
 way, some order is preserved and the file can be tracked through the rename.
 """
 
+import logging
 import re
 import os.path
 from iptcinfo import IPTCInfo
 
 next_id = 1
+logging.basicConfig(level=logging.INFO)
 
 class Tag(object):
     def __init__(self, text):
@@ -55,6 +57,7 @@ class Tag(object):
 
 class Image(object):
     def __init__(self, filename):
+        logging.info('Creating new Image from "%s".' % filename)
         self.basename = ""
         self.date = ""
         self.dirname = ""
@@ -114,6 +117,8 @@ class Image(object):
             print 'Now using "%s".' % newname
 
         assert not os.path.isfile(newname)
+
+        logging.info('Renaming "%s" to "%s".' % (self.origname, newname))
         os.rename(self.origname, newname)
 
     def _tagstring(self):
@@ -206,20 +211,20 @@ class Image(object):
         except IOError as e:
             pass
         else:
+            logging.info('Found Tags "%s" in "%s".' % (', '.join(sorted(self.iptc.keywords)), self.origname))
             for keyword in self.iptc.keywords:
                 self.add_tag(Tag(keyword))
 
     def write_iptc(self):
         self.iptc.data['keywords'] = list(sorted(self.get_tags()))
+        logging.info('Saving IPTC keywords to "%s".' % self.origname)
         self.iptc.save()
 
     def name_changed(self):
         return self.origname != self.current_path()
 
     def iptc_changed(self):
-        iptc_change = sorted(map(Tag, self.iptc.keywords)) != sorted(self.get_tags())
-
-        return self.name_change() or iptc_change
+       return sorted(map(Tag, self.iptc.keywords)) != sorted(self.get_tags())
 
     def save(self):
         if self.iptc_changed():
