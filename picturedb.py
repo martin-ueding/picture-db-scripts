@@ -50,7 +50,6 @@ class Tag(object):
 
 
 class Image(object):
-
     def __init__(self, filename):
         self.basename = ""
         self.date = ""
