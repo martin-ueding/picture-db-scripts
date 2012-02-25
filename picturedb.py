@@ -8,7 +8,7 @@ Renames picture files according to a strict directory layout.
 
 The ideal filename is::
 
-    YYYYMMDD-Event/YYYYMMDD-Event-0000.jpg
+    YYYYMMDD-Event/YYYYMMDD-Event-0000#Tag_1#Tag_2.jpg
 
 Most files are in correctly named folder, the images lack proper names though.
 This script parses the date and event name from the folder name and renames the
@@ -83,6 +83,9 @@ class Image(object):
 
     def add_tag(self, tag):
         """
+        Adds the given tag.
+
+        :param tag: Tag to add.
         :type tag: Tag
         :raise TypeError: Raised if not a hashtags.Tag given.
         """
@@ -96,6 +99,9 @@ class Image(object):
         Removes the tag, if it is there.
 
         If the given tag is not in the set, no error is printed.
+
+        :param tag: Tag to remove.
+        :type tag: Tag
         """
         if not isinstance(tag, Tag):
             raise TypeError("Image::remove_tag(hashtags.Tag)")
