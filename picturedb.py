@@ -165,6 +165,12 @@ class Image(object):
         self._parse_prefix()
 
     def _parse_prefix(self):
+        """
+        Parses the first part of the filename.
+
+        If date or event are already set from the folder name, they are not
+        overwritten.
+        """
         prefixparts = self.prefix.split('-')
 
         if len(prefixparts) >= 3:
@@ -211,9 +217,16 @@ class Image(object):
         self.event = m.group(2)
 
     def get_tags(self):
+        """
+        :return: A list with all tags.
+        :rtype: list
+        """
         return list(self.tags)
 
     def _load_iptc(self):
+        """
+        Loads the IPTC data from the original file.
+        """
         try:
             self.iptc = IPTCInfo(self.origname, force=True)
         except IOError as e:
@@ -224,17 +237,31 @@ class Image(object):
                 self.add_tag(Tag(keyword))
 
     def write_iptc(self):
+        """
+        Writes the IPTC data.
+        """
         self.iptc.data['keywords'] = list(sorted(self.get_tags()))
         logging.info('Saving IPTC keywords to "%s".' % self.origname)
         self.iptc.save()
 
     def name_changed(self):
+        """
+        :return: Whether the filename was changed.
+        :rtype: bool
+        """
         return self.origname != self.current_path()
 
     def iptc_changed(self):
-       return sorted(map(Tag, self.iptc.keywords)) != sorted(self.get_tags())
+        """
+        :return: Whether the IPTC tags need to be rewritten.
+        :rtype: bool
+        """
+        return sorted(map(Tag, self.iptc.keywords)) != sorted(self.get_tags())
 
     def save(self):
+        """
+        Renames the file and updates the IPTC fields.
+        """
         if self.iptc_changed():
             self.write_iptc()
 

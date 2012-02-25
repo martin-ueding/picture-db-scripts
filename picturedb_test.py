@@ -3,9 +3,17 @@
 
 # Copyright © 2012 Martin Ueding <dev@martin-ueding.de>
 
+"""
+Tests for the ``picturedb`` module.
+
+:see: picturedb
+"""
+
 import unittest
 
 from picturedb import *
+
+__docformat__ = "restructuredtext en"
 
 class ParseFilenameTest(unittest.TestCase):
     def test_without_folder(self):
