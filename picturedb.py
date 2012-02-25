@@ -3,19 +3,6 @@
 
 # Copyright © 2012 Martin Ueding <dev@martin-ueding.de>
 
-"""
-Renames picture files according to a strict directory layout.
-
-The ideal filename is::
-
-    YYYYMMDD-Event/YYYYMMDD-Event-0000#Tag_1#Tag_2.jpg
-
-Most files are in correctly named folder, the images lack proper names though.
-This script parses the date and event name from the folder name and renames the
-images. The image number is chosen from any number found in the filename. That
-way, some order is preserved and the file can be tracked through the rename.
-"""
-
 import logging
 import re
 import os.path
@@ -27,14 +14,24 @@ next_id = 1
 logging.basicConfig(level=logging.INFO)
 
 class Tag(object):
+    """
+    Models a tag.
+    """
     def __init__(self, text):
         """
+        Creates a new Tag from human readable text.
+
         :param text: Human readable text.
         """
         self.text = text
 
     @staticmethod
     def from_escaped(escaped):
+        """
+        Creates a new Tag from escaped text.
+
+        :param escaped: Escaped text.
+        """
         return Tag(re.sub(r"_", " ", escaped))
 
     def escape(self):
@@ -58,6 +55,9 @@ class Tag(object):
 
 
 class Image(object):
+    """
+    Models an image filename with tags.
+    """
     def __init__(self, filename):
         logging.info('Creating new Image from "%s".' % filename)
         self.basename = ""
