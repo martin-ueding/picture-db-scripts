@@ -1,4 +1,6 @@
 *.pyc
+_build
+api
 build
 dist
 hashtagc
