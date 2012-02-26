@@ -79,7 +79,7 @@ def handle_files(files, options):
 
         newname = os.path.basename(image.current_path())
 
-        if image.name_changed():
+        if image.name_changed() or image.iptc_changed():
             images.append(image)
             table_data.append([dirname, oldname, newname])
 
