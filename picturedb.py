@@ -11,7 +11,7 @@ from iptcinfo import IPTCInfo
 __docformat__ = "restructuredtext en"
 
 next_id = 1
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.FATAL)
 
 class Tag(object):
     """
