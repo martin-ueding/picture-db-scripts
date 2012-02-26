@@ -86,11 +86,11 @@ def handle_files(files, options):
     if len(table_data) == 0:
         return
 
+    print
     prettytable.print_table(
         ["directory", "old name", "new name"],
         table_data
     )
-
     print
 
     if options.y:
