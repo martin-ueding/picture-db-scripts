@@ -1,0 +1,17 @@
+.. Copyright © 2012 Martin Ueding <dev@martin-ueding.de>
+
+#########
+CHANGELOG
+#########
+
+v1.1
+    * Batch rename.
+    * Four digit date.
+    * Setup.py
+    - Help message.
+    - Recognize 1999 years as well.
+
+v1.0
+    Initial Release.
+
+.. vim: ft=rst
