@@ -7,6 +7,7 @@ import argparse
 import os.path
 import sys
 
+# TODO Use the canonical ``prettytable`` module instead of Martin's.
 import prettytable
 
 import picturedb
