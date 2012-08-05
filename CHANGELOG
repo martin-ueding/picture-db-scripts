@@ -4,10 +4,19 @@
 CHANGELOG
 #########
 
+v2.0
+    - Merge Hashtags project.
+    - Shorten filesnames.
+    - Add recursion.
+    - Load and write IPTC fields.
+    - Allow removal of tags.
+    - Sphinx documentation.
+    - Install target.
+
 v1.1
-    * Batch rename.
-    * Four digit date.
-    * Setup.py
+    - Batch rename.
+    - Four digit date.
+    - Setup.py
     - Help message.
     - Recognize 1999 years as well.
 
