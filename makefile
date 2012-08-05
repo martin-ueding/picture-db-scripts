@@ -15,6 +15,9 @@ doc: html/index.html
 html/index.html: $(pythonfiles)
 	epydoc -v $^
 
+install:
+	python setup.py install --root "$(DESTDIR)" --install-layout=deb
+
 .PHONY: clean
 clean:
 	$(RM) *.pyc *.pyo
