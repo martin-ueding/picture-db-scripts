@@ -45,16 +45,12 @@ def handle_input(paths, options):
 
 def handle_files(files, options):
     table_data = []
-    all_images = []
     changed = []
 
     file_list = sorted(files)
-    for f in file_list:
-        # Skip backup files.
-        if f.endswith("~"):
-            continue
 
-        all_images.append(picturedb.Image(f))
+    # Create objects for every filename, but exclude backup files.
+    all_images = [picturedb.Image(f) for f in file_list if not f.endswith('~')]
 
     if options.c:
         picturedb.compress_numbers(all_images)
