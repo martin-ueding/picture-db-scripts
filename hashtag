@@ -118,12 +118,13 @@ def _parse_args():
     :return: Namespace with arguments.
     :rtype: Namespace
     """
-    parser = argparse.ArgumentParser(usage="%(prog)s [options --] filenames", description="")
+    parser = argparse.ArgumentParser(description="Tool to manage the picture database.")
     parser.add_argument('-a', "--add", metavar='tags', type=str, nargs='*', help='Tag to add.')
+    parser.add_argument('-c', action='store_true', help='Compress numbers')
     parser.add_argument('-r', "--remove", metavar='tags', type=str, nargs='*', help='Tag to remove.')
     parser.add_argument('--iptc', action="store_true", help='Write IPTC tags.')
     parser.add_argument('-y', action="store_true", help="Don't ask questions")
-    parser.add_argument('filenames', metavar='filenames', type=str, nargs='+', help='Files to process.')
+    parser.add_argument('filenames', metavar='filename', type=str, nargs='+', help='File to process.')
     #parser.add_argument("", dest="", type="", default=, help=)
     #parser.add_argument('--version', action='version', version='<the version>')
 
