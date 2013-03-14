@@ -35,27 +35,12 @@ def handle_input(paths, options):
 
     for folder in folders:
         try:
-            handle_input(map(path_prepender(folder), os.listdir(folder)), options)
+            handle_input([os.path.join(folder, filename) for filename in os.listdir(folder)], options)
         except picturedb.FolderParseError as e:
             print e
 
     if len(files) > 0:
         handle_files(files, options)
-
-
-def path_prepender(path):
-    """
-    Generates a filter function that prepends the given path to each list item.
-
-    :rtype: function
-    """
-    def filter(filename):
-        """
-        Prepends the set path to the filename.
-        """
-        return os.path.join(path, filename)
-
-    return filter
 
 
 def handle_files(files, options):
