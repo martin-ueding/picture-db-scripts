@@ -3,6 +3,12 @@
 
 # Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
 
+"""
+Library that encapsulates most of the logic in the picture database. There are
+classes to model images and tags on those images. Additionally, there are
+methods that can act on colletions of images.
+"""
+
 import logging
 import re
 import os.path
@@ -75,7 +81,6 @@ class Tag(object):
 
     def __hash__(self):
         return hash(self.text)
-
 
 class Image(object):
     """
@@ -296,6 +301,8 @@ class Image(object):
 
     def iptc_changed(self):
         """
+        Check whether the tags match the IPTC tags.
+
         :return: Whether the IPTC tags need to be rewritten.
         :rtype: bool
         """
@@ -311,8 +318,10 @@ class Image(object):
         if self.name_changed():
             self.rename()
 
-
 class PictureParseError(Exception):
+    """
+    General exception class for this module.
+    """
     pass
 
 class FilenameParseError(PictureParseError):
