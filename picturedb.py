@@ -45,10 +45,10 @@ class Tag(object):
         :param escaped: Escaped text.
         :return: Unescaped text.
         """
-        unescaped = Tag(re.sub(r"_", " ", escaped))
+        unescaped = re.sub(r"_", " ", escaped)
         for replace, pattern in self.replacements:
             unescaped = re.sub(pattern, replace, unescaped)
-        return unescaped
+        return Tag(unescaped)
 
     def escape(self):
         """
