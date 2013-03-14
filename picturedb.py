@@ -408,7 +408,7 @@ def batch_rename(images):
 
     The problem is that those names are always in use, so that renaming will
     fail. This function renames all images to some temporary name and then
-    renames them all back. To avoid clashes, UUIDs are used.
+    renames them all back.
     """
     for image in images:
         image.rename_to_temp()
