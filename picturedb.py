@@ -135,6 +135,10 @@ class Image(object):
         return "Image('%s')" % self.current_path()
 
     def rename(self):
+        """
+        Performs the actual renaming. If the file exists, it will try to
+        increase the picture number.
+        """
         newname = self.current_path()
         if os.path.isfile(newname):
             print 'File "%s" already exists.' % newname
@@ -160,6 +164,12 @@ class Image(object):
         return tagstring
 
     def current_path(self):
+        """
+        Gives the current path of this image.
+        
+        :return: Current path.
+        :rtype: str
+        """
         filename = "%s-%s-%s%s.%s" % (
             self.date, self.event, self.number, self._tagstring(), self.suffix
         )
@@ -169,6 +179,8 @@ class Image(object):
     def _parse_filename(self):
         """
         Parses the filename to find the hashtags.
+
+        :raises FilenameParseError: Raised if name could not be parsed.
         """
         m = re.match(r"([^#]+)(#.*)*\.(\w+)", self.basename)
 
@@ -226,6 +238,8 @@ class Image(object):
     def _parse_folder_name(self):
         """
         Parses date and event name from a folder name.
+
+        Sets :py:attr:`date` and :py:attr:`event`.
         """
         if len(self.dirname) == 0:
             return
@@ -241,6 +255,8 @@ class Image(object):
 
     def get_tags(self):
         """
+        Gives the list with all tags.
+
         :return: A list with all tags.
         :rtype: list
         """
@@ -248,7 +264,8 @@ class Image(object):
 
     def _load_iptc(self):
         """
-        Loads the IPTC data from the original file.
+        Loads the IPTC data from the original file and saves them with
+        :py:meth:`add_tag`.
         """
         try:
             self.iptc = IPTCInfo(self.origname, force=True)
@@ -269,6 +286,9 @@ class Image(object):
 
     def name_changed(self):
         """
+        Checks whether the name that :py:meth:`current_path` gives is the same
+        than :py:attr:`origname`.
+
         :return: Whether the filename was changed.
         :rtype: bool
         """
