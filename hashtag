@@ -97,6 +97,7 @@ def handle_files(files, options):
                     image.rename()
             except OSError as e:
                 print image, e
+                raise
 
 
 def _parse_args():
