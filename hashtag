@@ -5,7 +5,6 @@
 
 from prettytable import PrettyTable
 import argparse
-import itertools
 import os.path
 import sys
 
@@ -57,10 +56,10 @@ def handle_files(files, options):
 
         all_images.append(picturedb.Image(f))
 
-    image_count = len(all_images)
+    if options.c:
+        picturedb.compress_numbers(all_images)
 
-    for n, image in zip(itertools.count(), all_images):
-        n += 1
+    for image in all_images:
         dirname = image.dirname
         oldname = os.path.basename(image.origname)
     
@@ -71,9 +70,6 @@ def handle_files(files, options):
         if not options.remove is None:
             for tag in options.remove:
                 image.remove_tag(picturedb.Tag(tag))
-
-        if options.c:
-            image.number = ('{:0'+str(len(str(image_count)))+'d}').format(n)
 
         newname = os.path.basename(image.current_path())
 

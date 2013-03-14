@@ -9,10 +9,11 @@ classes to model images and tags on those images. Additionally, there are
 methods that can act on colletions of images.
 """
 
-import logging
-import re
-import os.path
 from iptcinfo import IPTCInfo
+import itertools
+import logging
+import os.path
+import re
 
 __docformat__ = "restructuredtext en"
 
@@ -341,3 +342,21 @@ class EventParseError(PrefixParseError, FolderParseError):
 
 class DateParseError(PrefixParseError, FolderParseError):
     pass
+
+def compress_numbers(images):
+    """
+    Compresses the numbers in the filenames.
+
+    This has to be done to a whole collection so that they are numbered
+    correctly. The number of images are taken into account when padding the
+    number with leadings zeros.
+
+    :param images: Images to rename.
+    :type images: str
+    """
+    image_count = len(images)
+    digit_count = len(str(image_count))
+    format_string = '{:0'+str(digit_count)+'d}'
+
+    for n, image in zip(itertools.count(1), images):
+        image.number = format_string.format(n)
