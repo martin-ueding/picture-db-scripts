@@ -22,7 +22,6 @@ def main():
 
     handle_input(options.filenames, options)
 
-
 def handle_input(paths, options):
     files = []
     folders = []
@@ -41,7 +40,6 @@ def handle_input(paths, options):
 
     if len(files) > 0:
         handle_files(files, options)
-
 
 def handle_files(files, options):
     table_data = []
@@ -95,7 +93,6 @@ def handle_files(files, options):
         else:
             picturedb.batch_rename(changed)
 
-
 def _parse_args():
     """
     Parses the command line arguments.
@@ -114,7 +111,6 @@ def _parse_args():
     #parser.add_argument('--version', action='version', version='<the version>')
 
     return parser.parse_args()
-
 
 if __name__ == "__main__":
     main()
