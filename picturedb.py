@@ -46,7 +46,7 @@ class Tag(object):
         :return: Unescaped text.
         """
         unescaped = re.sub(r"_", " ", escaped)
-        for replace, pattern in self.replacements:
+        for replace, pattern in Tag.replacements:
             unescaped = re.sub(pattern, replace, unescaped)
         return Tag(unescaped)
 
