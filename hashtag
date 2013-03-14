@@ -1,14 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright © 2012 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
 
 import argparse
 import os.path
 import sys
-
-# TODO Use the canonical ``prettytable`` module instead of Martin's.
-import prettytable
+from prettytable import PrettyTable
 
 import picturedb
 
@@ -88,10 +86,10 @@ def handle_files(files, options):
         return
 
     print
-    prettytable.print_table(
-        ["directory", "old name", "new name"],
-        table_data
-    )
+    t = PrettyTable(["directory", "old name", "new name"])
+    for row in table_data:
+        t.add_row(row)
+    print t
     print
 
     if options.y:
