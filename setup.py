@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (c) 2012-2013 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
 
 from distutils.core import setup
 
