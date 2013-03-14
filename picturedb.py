@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Copyright © 2012 Martin Ueding <dev@martin-ueding.de>
+# Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
 
 import logging
 import re
@@ -16,7 +16,19 @@ logging.basicConfig(level=logging.FATAL)
 class Tag(object):
     """
     Models a tag.
+
+    To make the tag filename safe, it does the following:
+
+    - Space with ``_``
     """
+
+    replacements = [
+        (' ', '_'),
+    ]
+    """
+    List with replacements to make them filename safe.
+    """
+
     def __init__(self, text):
         """
         Creates a new Tag from human readable text.
@@ -31,11 +43,22 @@ class Tag(object):
         Creates a new Tag from escaped text.
 
         :param escaped: Escaped text.
+        :return: Unescaped text.
         """
-        return Tag(re.sub(r"_", " ", escaped))
+        unescaped = Tag(re.sub(r"_", " ", escaped))
+        for replace, pattern in self.replacements:
+            unescaped = re.sub(pattern, replace, unescaped)
+        return unescaped
 
     def escape(self):
-        escaped = re.sub(" ", "_", self.text)
+        """
+        Makes the given tag name file name safe.
+
+        :return: Escaped string.
+        """
+        escaped = self.text
+        for pattern, replace in self.replacements:
+            escaped = re.sub(pattern, replace, escaped)
         return escaped
 
     def __str__(self):
@@ -87,7 +110,7 @@ class Image(object):
 
         :param tag: Tag to add.
         :type tag: Tag
-        :raise TypeError: Raised if not a hashtags.Tag given.
+        :raise TypeError: Raised if not a :py:class:`Tag` given.
         """
         if not isinstance(tag, Tag):
             raise TypeError("Image::add_tag(hashtags.Tag)")
