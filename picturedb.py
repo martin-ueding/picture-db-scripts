@@ -73,7 +73,7 @@ class Tag(object):
         return self.text
 
     def __repr__(self):
-        return "Tag('%s')" % self.text
+        return "Tag('{}')".format(self.text)
 
     def __lt__(self, other):
         return self.text < other.text
@@ -89,7 +89,7 @@ class Image(object):
     Models an image filename with tags.
     """
     def __init__(self, filename):
-        logging.info('Creating new Image from "%s".' % filename)
+        logging.info('Creating new Image from "{}".'.format(filename))
 
         self.basename = ""
         self.date = ""
@@ -140,7 +140,7 @@ class Image(object):
         self.tags.discard(tag)
 
     def __repr__(self):
-        return "Image('%s')" % self.current_path()
+        return "Image('{}')".format(self.current_path())
 
     def rename(self):
         """
@@ -152,7 +152,7 @@ class Image(object):
         """
         newname = self.current_path()
         if os.path.isfile(newname):
-            print 'File "%s" already exists.' % newname
+            print 'File "{}" already exists.'.format(newname)
             answer = raw_input('Do you want to increase the number? [Y/n] ')
 
             if answer != "n":
@@ -160,7 +160,7 @@ class Image(object):
                     self.number = str(int(self.number) +1)
                     newname = self.current_path()
 
-            print 'Now using "%s".' % newname
+            print 'Now using "{}".'.format(newname)
 
         assert not os.path.isfile(newname)
 
@@ -170,7 +170,7 @@ class Image(object):
         except AttributeError:
             pass
 
-        logging.info('Renaming "%s" to "%s".' % (self.origname, newname))
+        logging.info('Renaming "{}" to "{}".'.format(self.origname, newname))
         os.rename(oldname, newname)
 
     def _tagstring(self):
@@ -187,7 +187,7 @@ class Image(object):
         :return: Current path.
         :rtype: str
         """
-        filename = "%s-%s-%s%s.%s" % (
+        filename = "{}-{}-{}{}.{}".format(
             self.date, self.event, self.number, self._tagstring(), self.suffix
         )
 
@@ -202,7 +202,7 @@ class Image(object):
         m = re.match(r"([^#]+)(#.*)*\.(\w+)", self.basename)
 
         if m is None:
-            raise FilenameParseError('Could not parse "%s".' % self.basename)
+            raise FilenameParseError('Could not parse "{}".'.format(self.basename))
 
         if not m.group(2) is None:
             taglist = m.group(2).split("#")
@@ -247,11 +247,11 @@ class Image(object):
 
         # In case anything is missing, this could not be parsed.
         if self.date == "":
-            raise DateParseError('Could not parse "%s".' % self.prefix)
+            raise DateParseError('Could not parse "{}".'.format(self.prefix))
         if self.event == "":
-            raise EventParseError('Could not parse "%s".' % self.prefix)
+            raise EventParseError('Could not parse "{}".'.format(self.prefix))
         if self.number == "":
-            raise NumberParseError('Could not parse "%s".' % self.prefix)
+            raise NumberParseError('Could not parse "{}".'.format(self.prefix))
 
     def _parse_folder_name(self):
         """
@@ -266,7 +266,7 @@ class Image(object):
         album_dir = os.path.basename(self.dirname)
         m = pattern.match(album_dir)
         if m is None:
-            raise FolderParseError('Could not parse "%s".' % album_dir)
+            raise FolderParseError('Could not parse "{}".'.format(album_dir))
 
         self.date = m.group(1)
         self.event = m.group(2)
@@ -290,7 +290,7 @@ class Image(object):
         except IOError as e:
             pass
         else:
-            logging.info('Found Tags "%s" in "%s".' % (', '.join(sorted(self.iptc.keywords)), self.origname))
+            logging.info('Found Tags "{}" in "{}".'.format(', '.join(sorted(self.iptc.keywords)), self.origname))
             for keyword in self.iptc.keywords:
                 self.add_tag(Tag(keyword))
 
@@ -299,7 +299,7 @@ class Image(object):
         Writes the IPTC data.
         """
         self.iptc.data['keywords'] = list(sorted(self.get_tags()))
-        logging.info('Saving IPTC keywords to "%s".' % self.origname)
+        logging.info('Saving IPTC keywords to "{}".'.format(self.origname))
         self.iptc.save()
 
     def name_changed(self):
