@@ -89,6 +89,7 @@ def handle_files(files, options):
     t = PrettyTable(["directory", "old name", "new name"])
     for row in table_data:
         t.add_row(row)
+    t.align = 'l'
     print t
     print
 
