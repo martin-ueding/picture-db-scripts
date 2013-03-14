@@ -36,7 +36,7 @@ def handle_input(paths, options):
     for folder in folders:
         try:
             handle_input([os.path.join(folder, filename) for filename in os.listdir(folder)], options)
-        except picturedb.FolderParseError as e:
+        except picturedb.PictureParseError as e:
             print e
 
     if len(files) > 0:
@@ -89,15 +89,11 @@ def handle_files(files, options):
         answer = raw_input("Rename files? [Y/n] ")
 
     if answer != "n":
-        for image in changed:
-            try:
-                if options.iptc:
-                    image.save()
-                else:
-                    image.rename()
-            except OSError as e:
-                print image, e
-                raise
+        if options.iptc:
+            for image in changed:
+                image.save()
+        else:
+            picturedb.batch_rename(changed)
 
 
 def _parse_args():

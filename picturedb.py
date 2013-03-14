@@ -14,6 +14,7 @@ import itertools
 import logging
 import os.path
 import re
+import uuid
 
 __docformat__ = "restructuredtext en"
 
@@ -159,8 +160,14 @@ class Image(object):
 
         assert not os.path.isfile(newname)
 
+        oldname = self.origname
+        try:
+            oldname = self.tempname
+        except AttributeError:
+            pass
+
         logging.info('Renaming "%s" to "%s".' % (self.origname, newname))
-        os.rename(self.origname, newname)
+        os.rename(oldname, newname)
 
     def _tagstring(self):
         tagstring = ""
@@ -320,6 +327,10 @@ class Image(object):
         if self.name_changed():
             self.rename()
 
+    def rename_to_temp(self):
+        self.tempname = str(uuid.uuid4())
+        os.rename(self.origname, self.tempname)
+
 class PictureParseError(Exception):
     """
     General exception class for parsing the information in the file names.
@@ -368,3 +379,29 @@ def compress_numbers(images):
 
     for n, image in zip(itertools.count(1), images):
         image.number = format_string.format(n)
+
+def batch_rename(images):
+    """
+    Renames a whole batch of images, avoiding temporary name collisions.
+
+    Say you have images like so:
+
+    - foo-0.jpg
+    - foo-1.jpg
+    - foo-2.jpg
+
+    If you use the compress option, the images will be renamed to:
+
+    - foo-1.jpg
+    - foo-2.jpg
+    - foo-3.jpg
+
+    The problem is that those names are always in use, so that renaming will
+    fail. This function renames all images to some temporary name and then
+    renames them all back. To avoid clashes, UUIDs are used.
+    """
+    for image in images:
+        image.rename_to_temp()
+
+    for image in images:
+        image.rename()
