@@ -34,7 +34,10 @@ def handle_input(paths, options):
             files.append(path)
 
     for folder in folders:
-        handle_input(map(path_prepender(folder), os.listdir(folder)), options)
+        try:
+            handle_input(map(path_prepender(folder), os.listdir(folder)), options)
+        except picturedb.FolderParseError as e:
+            print e
 
     if len(files) > 0:
         handle_files(files, options)
