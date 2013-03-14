@@ -90,6 +90,7 @@ class Image(object):
     """
     def __init__(self, filename):
         logging.info('Creating new Image from "%s".' % filename)
+
         self.basename = ""
         self.date = ""
         self.dirname = ""
@@ -143,8 +144,11 @@ class Image(object):
 
     def rename(self):
         """
-        Performs the actual renaming. If the file exists, it will try to
-        increase the picture number.
+        Performs the actual renaming.
+
+        If the file exists, it will try to increase the picture number. If the
+        attribute :py:attr:`tempname` is set, this name will be used instead of
+        :py:attr:`origname`.
         """
         newname = self.current_path()
         if os.path.isfile(newname):
@@ -328,6 +332,12 @@ class Image(object):
             self.rename()
 
     def rename_to_temp(self):
+        """
+        Renames the image to a temporary name.
+
+        It generates a random UUID 4 and renames the picture to it. The
+        temporary name is stored in the :py:attr:`tempname` attribute.
+        """
         self.tempname = str(uuid.uuid4())
         os.rename(self.origname, self.tempname)
 
