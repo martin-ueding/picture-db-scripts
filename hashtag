@@ -3,10 +3,11 @@
 
 # Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
 
+from prettytable import PrettyTable
 import argparse
+import itertools
 import os.path
 import sys
-from prettytable import PrettyTable
 
 import picturedb
 
@@ -45,16 +46,24 @@ def handle_input(paths, options):
 
 def handle_files(files, options):
     table_data = []
+    all_images = []
     images = []
-    for f in sorted(files):
+    file_list = sorted(files)
+    for f in file_list:
         # Skip backup files.
         if f.endswith("~"):
             continue
 
         image = picturedb.Image(f)
 
-        dirname = os.path.dirname(f)
-        oldname = os.path.basename(f)
+        all_images.append(image)
+
+    image_count = len(all_images)
+
+    for n, image in zip(itertools.count(), all_images):
+        n += 1
+        dirname = image.dirname
+        oldname = os.path.basename(image.origname)
     
         if not options.add is None:
             for tag in options.add:
@@ -63,6 +72,9 @@ def handle_files(files, options):
         if not options.remove is None:
             for tag in options.remove:
                 image.remove_tag(picturedb.Tag(tag))
+
+        if options.c:
+            image.number = ('{:0'+str(len(str(image_count)))+'d}').format(n)
 
         newname = os.path.basename(image.current_path())
 
