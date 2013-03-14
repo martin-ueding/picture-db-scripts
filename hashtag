@@ -55,6 +55,9 @@ def handle_files(files, options):
     if options.c:
         picturedb.compress_numbers(all_images)
 
+    t = PrettyTable(["directory", "old name", "new name"])
+    t.align = 'l'
+
     for image in all_images:
         dirname = image.dirname
         oldname = os.path.basename(image.origname)
@@ -71,16 +74,12 @@ def handle_files(files, options):
 
         if image.name_changed() or (image.iptc_changed() and options.iptc):
             changed.append(image)
-            table_data.append([dirname, oldname, newname])
+            t.add_row([dirname, oldname, newname])
 
-    if len(table_data) == 0:
+    if len(changed) == 0:
         return
 
     print
-    t = PrettyTable(["directory", "old name", "new name"])
-    for row in table_data:
-        t.add_row(row)
-    t.align = 'l'
     print t
     print
 
