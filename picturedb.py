@@ -352,7 +352,7 @@ def compress_numbers(images):
     number with leadings zeros.
 
     :param images: Images to rename.
-    :type images: str
+    :type images: list
     """
     image_count = len(images)
     digit_count = len(str(image_count))
