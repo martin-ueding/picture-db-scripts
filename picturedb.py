@@ -222,7 +222,8 @@ class Image(object):
 
             self.number = prefixparts[-1]
 
-        # The number could not be parsed yet, try to find a number.
+        # The number could not be parsed yet, try to find a number. At this
+        # point, any number is fine.
         if self.number == "":
             numbers = re.findall(r"\d+", self.prefix)
             if len(numbers) > 0:
