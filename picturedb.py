@@ -321,7 +321,7 @@ class Image(object):
 
 class PictureParseError(Exception):
     """
-    General exception class for this module.
+    General exception class for parsing the information in the file names.
     """
     pass
 
@@ -338,9 +338,16 @@ class NumberParseError(PrefixParseError):
     pass
 
 class EventParseError(PrefixParseError, FolderParseError):
+    """
+    Error related to the parsing of the event from either folder or image.
+    """
     pass
 
 class DateParseError(PrefixParseError, FolderParseError):
+    """
+    Error related to the parsing the date from either the folder or the image
+    file.
+    """
     pass
 
 def compress_numbers(images):
