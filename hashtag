@@ -47,16 +47,15 @@ def handle_input(paths, options):
 def handle_files(files, options):
     table_data = []
     all_images = []
-    images = []
+    changed = []
+
     file_list = sorted(files)
     for f in file_list:
         # Skip backup files.
         if f.endswith("~"):
             continue
 
-        image = picturedb.Image(f)
-
-        all_images.append(image)
+        all_images.append(picturedb.Image(f))
 
     image_count = len(all_images)
 
@@ -79,7 +78,7 @@ def handle_files(files, options):
         newname = os.path.basename(image.current_path())
 
         if image.name_changed() or (image.iptc_changed() and options.iptc):
-            images.append(image)
+            changed.append(image)
             table_data.append([dirname, oldname, newname])
 
     if len(table_data) == 0:
@@ -99,7 +98,7 @@ def handle_files(files, options):
         answer = raw_input("Rename files? [Y/n] ")
 
     if answer != "n":
-        for image in images:
+        for image in changed:
             try:
                 if options.iptc:
                     image.save()
