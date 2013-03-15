@@ -204,6 +204,7 @@ class Image(object):
         """
         Gives the current path of this image.
         
+        :raises FilenameTooLongError: Raised if generated filename is longer than the filesystem probably supports.
         :return: Current path.
         :rtype: str
         """
@@ -211,7 +212,12 @@ class Image(object):
             self.date, self.event, self.number, self._tagstring(), self.suffix
         )
 
-        return os.path.join(self.dirname, filename)
+        pathname = os.path.join(self.dirname, filename)
+
+        if len(pathname) > 256:
+            raise FilenameTooLongError("Filename “{}” is longer than 256 chars.".format(pathname))
+
+        return pathname
 
     def _parse_filename(self):
         """
@@ -362,7 +368,13 @@ class Image(object):
         self.tempname = str(uuid.uuid4())
         os.rename(self.origname, self.tempname)
 
-class PictureParseError(Exception):
+class PictureDBError(Exception):
+    """
+    Exception class for this module.
+    """
+    pass
+
+class PictureParseError(PictureDBError):
     """
     General exception class for parsing the information in the file names.
     """
@@ -391,6 +403,9 @@ class DateParseError(PrefixParseError, FolderParseError):
     Error related to the parsing the date from either the folder or the image
     file.
     """
+    pass
+
+class FilenameTooLongError(PictureDBError):
     pass
 
 def compress_numbers(images):

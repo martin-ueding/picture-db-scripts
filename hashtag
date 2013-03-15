@@ -57,7 +57,7 @@ def handle_input(paths, options):
     for folder in folders:
         try:
             handle_input([os.path.join(folder, filename) for filename in os.listdir(folder)], options)
-        except picturedb.PictureParseError as e:
+        except picturedb.PictureDBError as e:
             print e
 
     if len(files) > 0:
