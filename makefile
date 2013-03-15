@@ -1,4 +1,4 @@
-# Copyright (c) 2012 Martin Ueding <dev@martin-ueding.de>
+# Copyright (c) 2012-2013 Martin Ueding <dev@martin-ueding.de>
 
 pythonfiles := $(filter-out setup.py,$(wildcard *.py)) hashtag
 testfiles := $(wildcard *_test.py)
@@ -10,10 +10,9 @@ test:
 	python -m doctest $(pythonfiles)
 	python -m unittest $(testfiles:.py=)
 
-doc: html/index.html
+doc:
+	./sphinx html
 
-html/index.html: $(pythonfiles)
-	epydoc -v $^
 
 install:
 	python setup.py install --root "$(DESTDIR)" --install-layout=deb
