@@ -13,4 +13,4 @@ dependencies
 
 It uses the following external module:
 
-- iptc
+- `iptcinfo <https://pypi.python.org/pypi/IPTCInfo>`_
