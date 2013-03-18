@@ -32,5 +32,3 @@ v1.1
 
 v1.0
     Initial Release.
-
-.. vim: ft=rst
