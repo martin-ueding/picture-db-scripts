@@ -14,3 +14,16 @@ dependencies
 It uses the following external module:
 
 - `iptcinfo <https://pypi.python.org/pypi/IPTCInfo>`_
+
+installation
+============
+
+To install it for yourself::
+
+    ./setup.py install --user
+
+A system wide install can be achieved using::
+
+    make install
+
+.. vim: spell
