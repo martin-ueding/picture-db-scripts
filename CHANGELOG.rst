@@ -4,6 +4,10 @@
 CHANGELOG
 #########
 
+v2.1.2
+    - Coding in ``setup.py``
+    - New error class
+
 v2.1.1
     - MIT license
 
