@@ -4,6 +4,9 @@
 CHANGELOG
 #########
 
+v2.2
+    - GPL license
+
 v2.1.2
     - Coding in ``setup.py``
     - New error class
