@@ -12,17 +12,17 @@ v2.2
 
 v2.1.2
     - Coding in ``setup.py``
-    - New error class
+    - **Added**: New error class
 
 v2.1.1
     - MIT license
 
 v2.1
-    - Add README
+    - **Added**: README
     - Batch rename
     - Compress file numbers
     - More documentation
-    - Use canonical prettytable module
+    - Use canonical ``prettytable`` module
 
 v2.0
     - Merge Hashtags project
@@ -36,7 +36,7 @@ v2.0
 v1.1
     - Batch rename
     - Four digit date
-    - Setup.py
+    - **Added**: ``setup.py``
     - Help message
     - Recognize 1999 years as well
 
