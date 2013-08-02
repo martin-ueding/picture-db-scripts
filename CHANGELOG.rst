@@ -4,6 +4,9 @@
 CHANGELOG
 #########
 
+v2.3
+    - **Added**: Symlink script
+
 v2.2
     - GPL license
 
