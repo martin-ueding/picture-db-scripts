@@ -25,20 +25,20 @@ v2.1
     - Use canonical prettytable module
 
 v2.0
-    - Merge Hashtags project.
-    - Shorten filesnames.
-    - Add recursion.
-    - Load and write IPTC fields.
-    - Allow removal of tags.
-    - Sphinx documentation.
-    - Install target.
+    - Merge Hashtags project
+    - Shorten filesnames
+    - Add recursion
+    - Load and write IPTC fields
+    - Allow removal of tags
+    - Sphinx documentation
+    - Install target
 
 v1.1
-    - Batch rename.
-    - Four digit date.
+    - Batch rename
+    - Four digit date
     - Setup.py
-    - Help message.
-    - Recognize 1999 years as well.
+    - Help message
+    - Recognize 1999 years as well
 
 v1.0
-    Initial Release.
+    Initial Release
