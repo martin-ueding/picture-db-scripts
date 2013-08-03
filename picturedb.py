@@ -10,13 +10,15 @@ methods that can act on colletions of images.
 """
 
 from iptcinfo import IPTCInfo
+import datetime
+import dateutil.parser
 import itertools
 import logging
+import operator
 import os.path
 import PIL.ExifTags
 import PIL.Image
 import re
-import dateutil.parser
 import sys
 import uuid
 
@@ -167,12 +169,18 @@ class Image(object):
         return sorted(map(Tag, self.iptc.keywords)) != sorted(self.get_tags())
 
     def _load_creation_time(self):
-        i = PIL.Image.open(self.origname)
-        info = i._getexif()
-        for tag, value in info.items():
-            decoded = PIL.ExifTags.TAGS.get(tag, tag)
-            if decoded == 'DateTime':
-                self.creation_time = dateutil.parser.parse(value)
+        self.creation_time = datetime.datetime.max
+        try:
+            i = PIL.Image.open(self.origname)
+            info = i._getexif()
+            for tag, value in info.items():
+                decoded = PIL.ExifTags.TAGS.get(tag, tag)
+                if decoded == 'DateTime':
+                    self.creation_time = dateutil.parser.parse(value)
+        except AttributeError as e:
+            print("AttributeError in {}.".format(self.origname))
+        except IOError as e:
+            print("IOError in {}.".format(self.origname))
 
     def _load_iptc(self):
         """
@@ -418,7 +426,9 @@ def compress_numbers(images):
     digit_count = len(str(image_count))
     format_string = '{:0'+str(digit_count)+'d}'
 
-    for n, image in zip(itertools.count(1), sorted(images)):
+    images.sort(key=operator.attrgetter('creation_time'))
+
+    for n, image in zip(itertools.count(1), images):
         image.number = format_string.format(n)
 
 def batch_rename(images):
