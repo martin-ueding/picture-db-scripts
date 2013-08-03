@@ -13,7 +13,11 @@ from iptcinfo import IPTCInfo
 import itertools
 import logging
 import os.path
+import PIL.ExifTags
+import PIL.Image
 import re
+import dateutil.parser
+import sys
 import uuid
 
 __docformat__ = "restructuredtext en"
@@ -88,6 +92,47 @@ class Image(object):
     """
     Models an image filename with tags.
     """
+    def add_tag(self, tag):
+        """
+        Adds the given tag.
+
+        :param tag: Tag to add.
+        :type tag: Tag
+        :raise TypeError: Raised if not a :py:class:`Tag` given.
+        """
+        if not isinstance(tag, Tag):
+            raise TypeError("Image::add_tag(hashtags.Tag)")
+
+        self.tags.add(tag)
+
+    def current_path(self):
+        """
+        Gives the current path of this image.
+        
+        :raises FilenameTooLongError: Raised if generated filename is longer than the filesystem probably supports.
+        :return: Current path.
+        :rtype: str
+        """
+        filename = "{}-{}-{}{}.{}".format(
+            self.date, self.event, self.number, self._tagstring(), self.suffix
+        )
+
+        pathname = os.path.join(self.dirname, filename)
+
+        if len(pathname) > 256:
+            raise FilenameTooLongError("Filename “{}” is longer than 256 chars.".format(pathname))
+
+        return pathname
+
+    def get_tags(self):
+        """
+        Gives the list with all tags.
+
+        :return: A list with all tags.
+        :rtype: list
+        """
+        return list(self.tags)
+
     def __init__(self, filename):
         logging.info('Creating new Image from “{}”.'.format(filename))
 
@@ -109,95 +154,53 @@ class Image(object):
 
         self._parse_folder_name()
         self._parse_filename()
-
+        self._load_creation_time()
         self._load_iptc()
 
-    def add_tag(self, tag):
+    def iptc_changed(self):
         """
-        Adds the given tag.
+        Check whether the tags match the IPTC tags.
 
-        :param tag: Tag to add.
-        :type tag: Tag
-        :raise TypeError: Raised if not a :py:class:`Tag` given.
+        :return: Whether the IPTC tags need to be rewritten.
+        :rtype: bool
         """
-        if not isinstance(tag, Tag):
-            raise TypeError("Image::add_tag(hashtags.Tag)")
+        return sorted(map(Tag, self.iptc.keywords)) != sorted(self.get_tags())
 
-        self.tags.add(tag)
+    def _load_creation_time(self):
+        i = PIL.Image.open(self.origname)
+        info = i._getexif()
+        for tag, value in info.items():
+            decoded = PIL.ExifTags.TAGS.get(tag, tag)
+            if decoded == 'DateTime':
+                self.creation_time = dateutil.parser.parse(value)
 
-    def remove_tag(self, tag):
+    def _load_iptc(self):
         """
-        Removes the tag, if it is there.
-
-        If the given tag is not in the set, no error is printed.
-
-        :param tag: Tag to remove.
-        :type tag: Tag
+        Loads the IPTC data from the original file and saves them with
+        :py:meth:`add_tag`.
         """
-        if not isinstance(tag, Tag):
-            raise TypeError("Image::remove_tag(hashtags.Tag)")
-
-        self.tags.discard(tag)
-
-    def __repr__(self):
-        return "Image('{}')".format(self.current_path())
-
-    def rename(self):
-        """
-        Performs the actual renaming.
-
-        If the file exists, it will try to increase the picture number. If the
-        attribute :py:attr:`tempname` is set, this name will be used instead of
-        :py:attr:`origname`.
-        """
-        newname = self.current_path()
-        if os.path.isfile(newname):
-            print 'File “{}” already exists.'.format(newname)
-            answer = raw_input('Do you want to increase the number? [Y/n] ')
-
-            if answer != "n":
-                while os.path.isfile(newname):
-                    self.number = str(int(self.number) +1)
-                    newname = self.current_path()
-
-            print 'Now using “{}”.'.format(newname)
-
-        assert not os.path.isfile(newname)
-
-        oldname = self.origname
         try:
-            oldname = self.tempname
-        except AttributeError:
+            self.iptc = IPTCInfo(self.origname, force=True)
+        except IOError as e:
             pass
+        else:
+            logging.info('Found Tags “{}” in “{}”.'.format(
+                ', '.join(sorted(self.iptc.keywords)), self.origname))
+            for keyword in self.iptc.keywords:
+                self.add_tag(Tag(keyword))
 
-        logging.info('Renaming “{}” to “{}”.'.format(self.origname, newname))
-        os.rename(oldname, newname)
+    def __lt__(self, other):
+        return self.creation_time < other.creation_time
 
-    def _tagstring(self):
-        tagstring = ""
-        if len(self.tags) > 0:
-            tagstring = "#" + "#".join(sorted([tag.escape() for tag in self.tags]))
-
-        return tagstring
-
-    def current_path(self):
+    def name_changed(self):
         """
-        Gives the current path of this image.
-        
-        :raises FilenameTooLongError: Raised if generated filename is longer than the filesystem probably supports.
-        :return: Current path.
-        :rtype: str
+        Checks whether the name that :py:meth:`current_path` gives is the same
+        than :py:attr:`origname`.
+
+        :return: Whether the filename was changed.
+        :rtype: bool
         """
-        filename = "{}-{}-{}{}.{}".format(
-            self.date, self.event, self.number, self._tagstring(), self.suffix
-        )
-
-        pathname = os.path.join(self.dirname, filename)
-
-        if len(pathname) > 256:
-            raise FilenameTooLongError("Filename “{}” is longer than 256 chars.".format(pathname))
-
-        return pathname
+        return self.origname != self.current_path()
 
     def _parse_filename(self):
         """
@@ -221,6 +224,24 @@ class Image(object):
         self.suffix = m.group(3)
 
         self._parse_prefix()
+
+    def _parse_folder_name(self):
+        """
+        Parses date and event name from a folder name.
+
+        Sets :py:attr:`date` and :py:attr:`event`.
+        """
+        if len(self.dirname) == 0:
+            return
+
+        pattern = re.compile(r"([012]\d{3}[01]\d[0123]\d)-([^/]+)/?")
+        album_dir = os.path.basename(self.dirname)
+        m = pattern.match(album_dir)
+        if m is None:
+            raise FolderParseError('Could not parse “{}”.'.format(album_dir))
+
+        self.date = m.group(1)
+        self.event = m.group(2)
 
     def _parse_prefix(self):
         """
@@ -259,74 +280,63 @@ class Image(object):
         if self.number == "":
             raise NumberParseError('Could not parse “{}”.'.format(self.prefix))
 
-    def _parse_folder_name(self):
+    def remove_tag(self, tag):
         """
-        Parses date and event name from a folder name.
+        Removes the tag, if it is there.
 
-        Sets :py:attr:`date` and :py:attr:`event`.
+        If the given tag is not in the set, no error is printed.
+
+        :param tag: Tag to remove.
+        :type tag: Tag
         """
-        if len(self.dirname) == 0:
-            return
+        if not isinstance(tag, Tag):
+            raise TypeError("Image::remove_tag(hashtags.Tag)")
 
-        pattern = re.compile(r"([012]\d{3}[01]\d[0123]\d)-([^/]+)/?")
-        album_dir = os.path.basename(self.dirname)
-        m = pattern.match(album_dir)
-        if m is None:
-            raise FolderParseError('Could not parse “{}”.'.format(album_dir))
+        self.tags.discard(tag)
 
-        self.date = m.group(1)
-        self.event = m.group(2)
-
-    def get_tags(self):
+    def rename(self):
         """
-        Gives the list with all tags.
+        Performs the actual renaming.
 
-        :return: A list with all tags.
-        :rtype: list
+        If the file exists, it will try to increase the picture number. If the
+        attribute :py:attr:`tempname` is set, this name will be used instead of
+        :py:attr:`origname`.
         """
-        return list(self.tags)
+        newname = self.current_path()
+        if os.path.isfile(newname):
+            print 'File “{}” already exists.'.format(newname)
+            answer = raw_input('Do you want to increase the number? [Y/n] ')
 
-    def _load_iptc(self):
-        """
-        Loads the IPTC data from the original file and saves them with
-        :py:meth:`add_tag`.
-        """
+            if answer != "n":
+                while os.path.isfile(newname):
+                    self.number = str(int(self.number) +1)
+                    newname = self.current_path()
+
+            print 'Now using “{}”.'.format(newname)
+
+        assert not os.path.isfile(newname)
+
+        oldname = self.origname
         try:
-            self.iptc = IPTCInfo(self.origname, force=True)
-        except IOError as e:
+            oldname = self.tempname
+        except AttributeError:
             pass
-        else:
-            logging.info('Found Tags “{}” in “{}”.'.format(
-                ', '.join(sorted(self.iptc.keywords)), self.origname))
-            for keyword in self.iptc.keywords:
-                self.add_tag(Tag(keyword))
 
-    def write_iptc(self):
-        """
-        Writes the IPTC data.
-        """
-        self.iptc.data['keywords'] = list(sorted(self.get_tags()))
-        logging.info('Saving IPTC keywords to “{}”.'.format(self.origname))
-        self.iptc.save()
+        logging.info('Renaming “{}” to “{}”.'.format(self.origname, newname))
+        os.rename(oldname, newname)
 
-    def name_changed(self):
+    def rename_to_temp(self):
         """
-        Checks whether the name that :py:meth:`current_path` gives is the same
-        than :py:attr:`origname`.
+        Renames the image to a temporary name.
 
-        :return: Whether the filename was changed.
-        :rtype: bool
+        It generates a random UUID 4 and renames the picture to it. The
+        temporary name is stored in the :py:attr:`tempname` attribute.
         """
-        return self.origname != self.current_path()
+        self.tempname = str(uuid.uuid4())
+        os.rename(self.origname, self.tempname)
 
-    def iptc_changed(self):
-        """
-        Check whether the tags match the IPTC tags.
-
-        :return: Whether the IPTC tags need to be rewritten.
-        :rtype: bool
-        """
-        return sorted(map(Tag, self.iptc.keywords)) != sorted(self.get_tags())
+    def __repr__(self):
+        return "Image('{}')".format(self.current_path())
 
     def save(self):
         """
@@ -338,15 +348,20 @@ class Image(object):
         if self.name_changed():
             self.rename()
 
-    def rename_to_temp(self):
-        """
-        Renames the image to a temporary name.
+    def _tagstring(self):
+        tagstring = ""
+        if len(self.tags) > 0:
+            tagstring = "#" + "#".join(sorted([tag.escape() for tag in self.tags]))
 
-        It generates a random UUID 4 and renames the picture to it. The
-        temporary name is stored in the :py:attr:`tempname` attribute.
+        return tagstring
+
+    def write_iptc(self):
         """
-        self.tempname = str(uuid.uuid4())
-        os.rename(self.origname, self.tempname)
+        Writes the IPTC data.
+        """
+        self.iptc.data['keywords'] = list(sorted(self.get_tags()))
+        logging.info('Saving IPTC keywords to “{}”.'.format(self.origname))
+        self.iptc.save()
 
 class PictureDBError(Exception):
     """
@@ -403,7 +418,7 @@ def compress_numbers(images):
     digit_count = len(str(image_count))
     format_string = '{:0'+str(digit_count)+'d}'
 
-    for n, image in zip(itertools.count(1), images):
+    for n, image in zip(itertools.count(1), sorted(images)):
         image.number = format_string.format(n)
 
 def batch_rename(images):
