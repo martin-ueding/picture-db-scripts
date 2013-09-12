@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # Copyright © 2013 Martin Ueding <dev@martin-ueding.de>
@@ -12,7 +12,7 @@ __docformat__ = "restructuredtext en"
 
 class RenameButton(QtGui.QPushButton):
     def __init__(self, tag_text, parent):
-        super().__init__(tag_text, parent)
+        super(RenameButton, self).__init__(tag_text, parent)
         
         self.setAcceptDrops(True)
         self.tag = picturedb.Tag(tag_text)
@@ -26,7 +26,7 @@ class RenameButton(QtGui.QPushButton):
     def dropEvent(self, e):
         urls = e.mimeData().urls()
         print(urls)
-        local_files = [f.toLocalFile() for f in urls]
+        local_files = [str(f.toLocalFile()) for f in urls]
         print(local_files)
 
         self.handle_files(local_files)
@@ -43,7 +43,7 @@ class RenameButton(QtGui.QPushButton):
 
 class Example(QtGui.QWidget):
     def __init__(self):
-        super().__init__()
+        super(Example, self).__init__()
 
         self.initUI()
         
