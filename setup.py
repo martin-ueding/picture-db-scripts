@@ -14,6 +14,7 @@ setup(
     ],
     scripts = [
         "hashtag",
+        "pdb-batch-rename",
         "pdb-symlink",
     ],
     version = "2.2",
