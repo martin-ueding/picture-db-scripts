@@ -36,8 +36,7 @@ class Example(QtGui.QWidget):
         
     def initUI(self):
         button = RenameButton("Tag1", self)
-        
-        self.setWindowTitle('Simple Drag & Drop')
+        self.setWindowTitle("picture-db-scripts batch rename")
 
 def main():
     options = _parse_args()
