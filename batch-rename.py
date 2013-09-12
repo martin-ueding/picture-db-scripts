@@ -6,15 +6,16 @@
 import argparse
 from PyQt4 import QtGui
 import sys
+import picturedb
 
 __docformat__ = "restructuredtext en"
 
 class RenameButton(QtGui.QPushButton):
-    def __init__(self, tag, parent):
-        super().__init__(tag, parent)
+    def __init__(self, tag_text, parent):
+        super().__init__(tag_text, parent)
         
         self.setAcceptDrops(True)
-        self.tag = tag
+        self.tag = picturedb.Tag(tag_text)
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasFormat('text/plain'):
@@ -27,6 +28,18 @@ class RenameButton(QtGui.QPushButton):
         print(urls)
         local_files = [f.toLocalFile() for f in urls]
         print(local_files)
+
+        self.handle_files(local_files)
+
+    def handle_files(self, local_files):
+        for file_ in local_files:
+            self.handle_file(file_)
+
+    def handle_file(self, file_):
+        image = picturedb.Image(file_)
+        image.add_tag(self.tag)
+        image.save()
+
 
 class Example(QtGui.QWidget):
     def __init__(self):
