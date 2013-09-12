@@ -4,6 +4,9 @@
 Changelog
 #########
 
+v2.4
+    - **Added**: Batch tagging GUI with drag and drop
+
 v2.3
     - **Added**: Symlink script
 
