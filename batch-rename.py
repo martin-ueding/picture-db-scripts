@@ -3,18 +3,21 @@
 
 # Copyright © 2013 Martin Ueding <dev@martin-ueding.de>
 
-import argparse
 from PyQt4 import QtGui
-import sys
+import argparse
+import json
+import os
 import picturedb
+import sys
 
 __docformat__ = "restructuredtext en"
 
 class RenameButton(QtGui.QPushButton):
-    def __init__(self, tag_text, parent):
-        super(RenameButton, self).__init__(tag_text, parent)
+    def __init__(self, tag_text):
+        super(RenameButton, self).__init__(tag_text)
         
         self.setAcceptDrops(True)
+        self.tag_text = tag_text
         self.tag = picturedb.Tag(tag_text)
 
     def dragEnterEvent(self, e):
@@ -25,9 +28,7 @@ class RenameButton(QtGui.QPushButton):
 
     def dropEvent(self, e):
         urls = e.mimeData().urls()
-        print(urls)
-        local_files = [str(f.toLocalFile()) for f in urls]
-        print(local_files)
+        local_files = [unicode(f.toLocalFile()).encode("utf8") for f in urls]
 
         self.handle_files(local_files)
 
@@ -36,6 +37,7 @@ class RenameButton(QtGui.QPushButton):
             self.handle_file(file_)
 
     def handle_file(self, file_):
+        print("Adding {} to {}.".format(file_, self.tag_text))
         image = picturedb.Image(file_)
         image.add_tag(self.tag)
         image.save()
@@ -48,7 +50,16 @@ class Example(QtGui.QWidget):
         self.initUI()
         
     def initUI(self):
-        button = RenameButton("Tag1", self)
+        vbox = QtGui.QVBoxLayout()
+        vbox.addStretch(1)
+        buttons = []
+        with open(os.path.expanduser("~/.config/picture-db-scripts/favorite_tags.js")) as f:
+            contents = f.read()
+            tags = json.loads(contents)
+        tags.sort()
+        for tag in tags:
+            vbox.addWidget(RenameButton(tag.encode("utf8")))
+        self.setLayout(vbox)
         self.setWindowTitle("picture-db-scripts batch rename")
 
 def main():
