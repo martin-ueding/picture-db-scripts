@@ -3,7 +3,7 @@
 
 # Copyright © 2012-2013 Martin Ueding <dev@martin-ueding.de>
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     author = "Martin Ueding",
@@ -18,4 +18,8 @@ setup(
         "pdb-symlink",
     ],
     version = "2.2",
+    install_requires=[
+        "iptcinfo",
+        "pyqt",
+    ]
 )
