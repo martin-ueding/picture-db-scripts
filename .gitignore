@@ -1,15 +1,9 @@
 *.pyc
-
 _build
-
 api
-
 build
-
 dist
-
 hashtagc
-
 html
-
 tags
+picture_db_scripts.egg-info/
