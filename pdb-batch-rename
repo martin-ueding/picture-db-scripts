@@ -76,6 +76,8 @@ class Example(QtGui.QWidget):
             tags.sort()
             for tag in tags:
                 vbox.addWidget(RenameButton(tag.encode("utf8")))
+        else:
+            print("You can add a config file at {}.".format(config_file))
         vbox.addWidget(Input())
         self.setLayout(vbox)
         self.setWindowTitle("picture-db-scripts batch rename")
