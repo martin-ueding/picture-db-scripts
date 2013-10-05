@@ -68,12 +68,14 @@ class Example(QtGui.QWidget):
         vbox = QtGui.QVBoxLayout()
         vbox.addStretch(1)
         buttons = []
-        with open(os.path.expanduser("~/.config/picture-db-scripts/favorite_tags.js")) as f:
-            contents = f.read()
-            tags = json.loads(contents)
-        tags.sort()
-        for tag in tags:
-            vbox.addWidget(RenameButton(tag.encode("utf8")))
+        config_file = os.path.expanduser("~/.config/picture-db-scripts/favorite_tags.js")
+        if os.path.isfile(config_file):
+            with open(config_file) as f:
+                contents = f.read()
+                tags = json.loads(contents)
+            tags.sort()
+            for tag in tags:
+                vbox.addWidget(RenameButton(tag.encode("utf8")))
         vbox.addWidget(Input())
         self.setLayout(vbox)
         self.setWindowTitle("picture-db-scripts batch rename")
